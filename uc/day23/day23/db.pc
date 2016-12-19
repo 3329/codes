@@ -1,0 +1,44 @@
+#include "db.h"
+#include <cstring>
+#include <cstdlib>
+#include <sqlca.h>
+#include <cstdio>
+
+EXEC SQL BEGIN DECLARE SECTION;
+	long SQLCODE;
+	char SQLSTAT[6];
+EXEC SQL END   DECLARE SECTION;
+
+int Db::opendb(char *account){
+	EXEC SQL BEGIN DECLARE SECTION;
+	char szTmp_account[60];
+	EXEC SQL END   DECLARE SECTION;
+	
+	memcpy(szTmp_account,account,strlen(account)+1);	
+	EXEC SQL CONNECT :szTmp_account;
+	/*SQLCODE变量的值由proc生成的代码自动赋值*/
+	return SQLCODE;
+	
+}
+int Db::closedb(){
+	EXEC SQL COMMIT RELEASE;
+	return SQLCODE;
+}
+float Db::querySalaryByName(char *name){
+	EXEC SQL BEGIN DECLARE SECTION;
+	char szName[30];
+	float salary;
+	EXEC SQL END   DECLARE SECTION;
+	
+	memcpy(szName,name,strlen(name)+1);
+	/*sprintf(szName,"%%%s%%",name);*/	
+	
+	EXEC SQL SELECT salary INTO :salary FROM s_emp 
+			WHERE xing like :szName;
+	if(SQLCODE==0){
+		return salary;
+	}
+	else{
+		return 0.0f;
+	}
+}

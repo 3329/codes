@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <sqlca.h>
+struct Emp
+{
+	char name[30];
+	float salary;
+};
+
+
+char *account="openlab/open123";
+struct Emp e;	
+
+long linkdb(){
+	EXEC SQL CONNECT :account;
+	return sqlca.sqlcode;
+}
+void closedb(){
+	exec sql commit release;
+}
+void querydb(){
+	EXEC SQL SELECT xing,salary INTO :e 
+		FROM s_emp  WHERE id=1;
+	if(sqlca.sqlcode>=0){
+		printf("查询成功!\n");
+		printf("%s,%f\n",e.name,e.salary);
+	}
+	else{
+		printf("查询失败!\n");
+	}
+}
+
+
+main()
+{
+	if(linkdb()==-1){
+		printf("连接失败!\n");
+		exit(-1);
+	}
+	printf("连接成功!\n");	
+	querydb();
+	closedb();
+}

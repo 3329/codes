@@ -1,0 +1,197 @@
+一.异步IO
+	1.思路：
+			在一个进程内处理。
+			IO的信号机制（异步）:对数据的处理不要直接使用read/recv等读取，而是等待信号，才read/recv读取数据。
+	2.异步IO：
+			在IO的I缓冲有数据，系统向进程发送信号。
+			在IO的O缓冲没有数据，系统向进程发送信号。
+	3.怎样使得IO是异步的？
+			fcntl,ioctl函数修改IO描述符号的状态属性		
+					F_SETFL  O_ASYNC
+			IO的I缓冲只要有数据，就会向指定的进程发送信号
+	4.设置IO的信号向哪个进程发送
+			fcntl修改IO信号发送的进程
+			F_SETOWN     getpid()
+	5.异步IO发送的信号
+			SIGIO
+			可以使用fcntl修改信号
+			F_SETSIG   信号
+	6.案例：
+				异步操作标准输入O
+	7.select函数对异步IO的封装
+            int  select(int maxfds,fd_set  in,/*异步输入*/
+						 fd_set  out,/*异步输出*/
+						 fd_set  err,/*异步错误*/
+						 struct timeval*timeout);/*对IO等待延时*/
+											 
+	工作原理：
+			当in中的输入描述符号有数据，select返回
+			当out,err中输出描述符号数据空，select
+			当没有描述符号改变，该函数阻塞。
+	返回：
+			>0:in,out,err中描述符号有改变的个数
+			=0:没有IO改变，但延时时间到。			
+			-1:函数错误
+	参数5：如果为NULL，则延时无穷。
+	
+	8.使用异步IO解决多客户描述符号的处理
+		把服务器socket描述符号与客户的描述符号全部使用select异步监控，一旦有描述符号有数据，则一次读取，完毕后进入下次监控。
+			
+	9.使用select实现一个进程处理TCP多描述符号。
+			准备工作：操作fd_set文件描述符号集合。
+			void FD_CLR(int fd,fd_set *sets);(删除)
+			void FD_ISSET(int fd,fd_set *sets);(判断是否在描述符集合中)
+			void FD_SET(int fd,fd_set *sets);(添加)
+			void FD_ZERO(fd_set *sets);(全部删除)
+			
+			注意：	select的第2，3，4个参数,既是输入也是输出参数。
+				输入：被监控的描述符号集合
+				输出：产生改变的描述符号集合
+	10.另外一个与select类似的poll函数.
+				poll采用的是事件。(它也是用信号来实现的)
+			int  poll(struct pollfd *fds, //被监视的描述符号数组
+								int nfds,//被监视的数组个数
+								int timeout);//延时
+			
+			返回：      >0:OK
+					=0:到时间
+					-1:错误
+			重点：
+					struct pollfd
+					{
+						int fd;//被监视的描述符号
+						int events;//被监视的事件
+						int revents;//产生改变的事件
+					}								
+					
+					poll函数不会改变fd与events,只改变revents。
+			事件：
+					POLLIN：
+						
+					POLLOUT：
+											
+																	
+二.多线程
+		1.回顾：
+			select实现多任务有特定条件：基于IO
+		2.不是基于IO怎么实现多任务？
+			实现多线程实现多任务。
+		3.什么是多线程？
+			a.程序执行的子任务。
+			b.与其他任务在同一个进程的内存空间。
+			c.每个进程至少有一个执行任务：线程
+					主线程main
+			d.线程提出背景：
+					进程之间交换数据非常麻烦。
+					建议：
+						能否实现可以实现多任务，但天生共享内存空间。
+					方案：
+						在进程中调度不同的代码。
+					结果：
+						线程。
+			e.进程与线程的异同
+					e1.都是执行子任务。
+								都有代码。
+					e2.占用内存空间
+								进程独立占有:进程间内存独立
+								线程有独立空间：线程栈，也可以访问进程内其他的内存。(共享)
+					e3.都会被分配时间片  
+																
+			f.线程的实现：
+					f1.基于内核的实现.(重量：系统级调度)
+					f2.基于进程的API封装实现。（轻量：进程级调度）
+			g.我们目前学习的是GNU提出的轻量级线程实现
+				POSIX Thread		
+				libpthread.so		
+				pthread.h
+				
+		4.创建多线程
+			4.1.创建步骤
+				a.线程代码实现(固定原型的函数)	
+				b.定义一个线程ID（pthread_t）
+				c.使用pthread_create创建线程。
+			4.2.pthread_create函数说明
+				int pthread_create(
+						pthread_t *thid,//返回线程ID
+						pthread_attr_t *attr,//线程属性，建议为NULL,采用默认属性
+						void*(*run)(void*),//线程代码函数
+						void *data);//传递给run的参数
+				
+				线程函数与系统函数、标准C函数的异常处理有区别：
+						返回值:0表示成功
+							非0：表示错误原因。
+							不再设置errno.
+						
+					
+
+            总结：
+		      线程：不同的函数在进程内部的调度执行。
+		
+			4.3.案例
+					创建线程，
+					使用pthread_create函数
+					体会什么是线程。
+				结论：
+					1.进程结束所有子线程强制结束。
+					2.使用pthread_join等待子线程结束
+		int pthread_join(pthread_t tid,//等待线程
+						void **val);//线程函数的返回值
+							3.线程函数结束。线程就结束
+		保证线程不结束，死循环		
+							4.main函数是一个特殊的线程
+								主线程。与子线程有相同优先级。
+			4.4.线程应用
+				Curses的多线程摇奖程序
+						a.显示7位随机数
+						b.显示时间
+						c.键盘控制停与继续
+						
+				模型搭建：
+						a.创建两个子线程。
+						b.Curses初始化
+						c.主线程负责键盘输入
+						d.子线程1负责随机数
+						e.子线程2负责时间
+		5.多线程的问题
+				多个线程并发访问导致数据异常。
+				解决方法：互斥
+												
+		6.实现互斥
+				互斥量：
+				实现互斥的变量类型pthread_mutex_t
+				初始化互斥量
+				pthread_mutex_init
+				释放互斥量
+				pthread_mutex_destroy
+				修改互斥量的值：
+				pthread_mutex_lock (互斥量为1阻塞，为0返回)
+				pthread_mutex_unlock
+												
+			编程模型：
+					a.声明互斥量。									
+					b.初始化互斥量
+					c.使用互斥量加锁
+					d.使用互斥量解锁
+					e.释放互斥量
+		7.使用多线程实现TCP服务器
+				主线程：
+						接收所有客户
+						并且创建子线程
+				子线程：
+						接收客户数据
+						广播
+														
+							
+            作业：
+			1.把TCP聊天服务器使用poll实现。
+			2.摇奖程序为什么花屏？
+					怎么解决。
+			3.写一个TCP服务器，接收浏览器连接。
+				分析浏览器传递给TCP服务器的数据的含义。
+				
+           注意：
+            在solaris系统中网络编程
+		编译选项必须添加-lsocket -lnsl 
+		
+		
+		

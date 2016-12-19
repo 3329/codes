@@ -1,0 +1,111 @@
+// path
+ 		src/Util/RunCmd.cpp
+
+// Discript
+   1. fork subprocess
+   2. subprocess exec the command 
+   3. use the pipe get reslut (include stdout & stderr
+
+OmnString 
+AosRunCmd::run(const OmnString &cmd)
+{
+	OmnString info = "";
+	if (cmd == "") return info; 
+	
+	char stdoutbuf[eMaxBuffLen];
+	char stderrbuf[eMaxBuffLen];
+	int stdout_fd[2];
+	int stderr_fd[2];
+	pid_t pid;
+
+	// 1. create pipe 
+	if (pipe(stdout_fd) < 0 || pipe(stderr_fd) < 0)
+	{
+		OmnAlarm << "pipe error" << enderr;
+	}
+
+	// 2. fork child process
+	if ((pid = fork()) < 0)
+	{
+		OmnAlarm << "fork error" << enderr;
+	}
+	else if (pid > 0)
+	{
+		// parent prcess will read infomation from pipe
+		close(stdout_fd[1]);	// close write end
+		close(stderr_fd[1]);	// close write end
+
+		// read infomation from pipe
+		getDataFromPipe(stdout_fd[0], stdoutbuf);
+		getDataFromPipe(stderr_fd[0], stderrbuf);
+		info << stdoutbuf;		
+		info << stderrbuf;
+
+		close(stdout_fd[0]);
+		close(stderr_fd[0]);
+		if (waitpid(pid, NULL, 0) < 0)
+		{
+			OmnAlarm << "waitpid error" << enderr;
+		}
+	}
+	else
+	{
+		// child process will execute the command and write infomation into pipe
+		close(stdout_fd[0]);	// close stdout_fd read end
+		close(stderr_fd[0]);	// close stderr_fd read end
+
+		if (stdout_fd[1] != STDOUT_FILENO)
+		{
+			if (dup2(stdout_fd[1], STDOUT_FILENO) != STDOUT_FILENO)
+			{
+				OmnAlarm << "dup2 error to stdout" << enderr;
+			}
+
+			close(stdout_fd[1]);	// don't need this after dup2
+		}
+
+		if (stderr_fd[1] != STDERR_FILENO)
+		{
+			if (dup2(stderr_fd[1], STDERR_FILENO) != STDERR_FILENO)
+			{
+				OmnAlarm << "dup2 error to stdout" << enderr;
+			}
+
+			close(stderr_fd[1]);	// don't need this after dup2
+		}
+
+		if (execl("/bin/sh", "sh", "-c", cmd.data(), (char *)0) == -1)
+		{
+			OmnAlarm << "execl return error" << enderr;
+		}
+	}
+	
+	return info;
+}
+
+
+char* 
+AosRunCmd::getDataFromPipe(int fd, char* buf)
+{
+	int count = 0;
+	int n = 0;
+	memset(buf, 0, sizeof(buf));
+
+	while ((n = read(fd, buf+count, 1024)) > 0) 
+	{
+		count += n;
+		if (count > eMaxBuffLen)
+		{
+			OmnAlarm << "Buffer memory is not enough, need more memory." << enderr; 
+		}
+	}
+
+	if (n < 0) 
+	{
+		OmnAlarm << "read data from pipe error" << enderr;
+	}
+
+	return buf;
+}
+
+

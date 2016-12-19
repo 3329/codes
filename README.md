@@ -1,2 +1,8 @@
 # codes
-Good good study, day day up! 
+
+DADADA:
+
+	"Stay Hungry, Stay Foolish." -- Steve Jobs
+
+
+

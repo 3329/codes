@@ -1,0 +1,11 @@
+use iil
+ 1. SEUtil/DocZTGs.h
+ 2. IILClient/IILClient.cpp
+ 		addU64ValueDoc(
+			const OmnString &iilname,
+			const u64 &key,
+			const u64 &value,
+			const bool key_unique,
+			const bool value_unique)
+3. Query:
+	example: JQLPaarser/JqlStmtUpdateItem.cpp:111

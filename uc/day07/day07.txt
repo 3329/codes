@@ -1,0 +1,196 @@
+			
+三.IO与文件目录管理
+	1.文件描述符号
+	2.文件读写
+	3.打开关闭文件(文件的权限与设置位)
+	4.文件定位（/proc/$pid/mem）
+		4.1.lseek函数说明
+			off_t lseek(
+				int fd,//打开文件描述符号
+				off_t off,文件定位的相对位置
+				int whence)//文件定位的参照点
+			返回：
+					>=0 定位以后在文件中的绝对位置。	
+					=-1 定位错误
+			说明:
+					参数2 off_t off可以是正负数.
+					参数3 参照点：
+							文件开始位置SEEK_SET
+							文件当前位置SEEK_CUR
+							文件结束位置SEEK_END
+4.2.案例：使用lseek读取Unix日志文件中的用户登录的登录名与IP
+			000-031  	登录名
+			112-113 	登录IP字符串长度
+			114-371		登录IP
+			
+			思路：
+					打开文件
+					while(i){
+						定位在第i条记录开始lseek						
+						读取32字节字符串
+						判定返回值,返回0与-1，则中断循环
+						定位在第i条记录的112位置lseek
+						读取2字节的整数(采用unix字节序)
+						定位在第i条记录的114位置
+						读取257字节的字符串
+						在IP字符串添加终止字符
+					}
+		
+		补充：
+				字节序：不同的计算机存储数据的时候，
+								有的从低字节往高字节存放。
+								有的从高字节往低字节存放。
+				字节序对字符串没有影响。就是对一个字节没有影响。
+				对多字节有影响。
+						short int
+				根据字节序手工交换字节。
+				big-endian
+				little-endian
+						
+				read与write也改变文件读取位置。									
+		4.3.lseek对文件的影响
+				SEEK_CUR   定位位置>0 后移 <0倒移		
+				SEEK_SET   位置<0  ，会出现什么问题？
+				
+				SEEK_SET   位置>文件大小,会出现什么问题？			
+				lseek并不返回-1.	而是绝对位置。
+				
+				在这个并不存在的位置上，写数据？
+		4.4.pread与pwrite		
+				在指定的位置读写。
+				pread/pwrite先使用lseek改变位置，			
+					完毕后回复位置。
+			
+			案例：
+					使用lseek+read读取/proc/$pid/mem
+							
+					使用pread读取/proc/$pid/mem
+					
+			结论：
+					pread=lseek+read				
+					pwrite=lseek+write
+					pread与pwrite不改变文件读写位置指针。
+				
+	5.IO与重定向
+			判定描述符号是否被重定向。
+				int isatty(int fd);
+			
+			终端输出不受重定向影响。
+				输出不输出到0 1 2，而是直接输出到终端设备文件
+				
+	6.文件描述符号的相关操作
+			6.1.文件描述符号是整数。
+					文件描述符号不仅仅是整数，还对应一个内核中的内存块（或者内核对象,文件描述符号的Context上下文）。
+			6.2.dup与dup2	克隆文件描述符号
+			
+			6.3.文件描述符号操作
+					fcntl
+				int  fcntl(int fd,int cmd);
+				int  fcntl(int fd,int cmd,long args);
+				第二个参数：
+							对描述的操作命令。
+								F_DUPFD  克隆描述符号
+								int fcntl(fd,F_DUPFD);
+								返回值就是新的被克隆描述符号
+								F_SETFD
+								F_GETFD	 使用exec加载程序代码
+												 是否释放描述符号的上下文。	
+								fcntl(fd,F_SETFD,0);//保持打开
+								fcntl(fd,F_SETFD,FD_CLOEXEC);//关闭
+										
+												 
+								F_GETFL	
+								F_SETFL	 获取打开描述符号的状态
+
+								设置打开描述符号的状态
+								例子：返回标记
+								int fcntl(fd,F_GETFL);
+								fcntl(fd,F_SETFL,O_APPEND);
+								
+								状态：
+										不可修改状态:
+											O_RDONLY O_WRONLY O_RDWR
+											O_CREAT	O_EXCL O_TRUNC
+											
+										可修改状态:
+											O_APPEND
+											O_ASYNC
+											O_SYNC
+											O_NOATIME
+											O_DIRECT
+											
+								F_SETLK
+								F_GETLK 文件锁
+								
+								F_SETOWN
+								F_GETOWN
+								F_SETSIG
+								F_GETSIG	获取设置描述符号的信号值			
+																 	
+				第三个参数
+							操作命令的参数	
+					
+			案例：
+					1.使用fcntl克隆文件描述符号
+					2.使用fcntl判定文件描述符号是否只读？
+	
+	7.文件映射
+		 
+		 使用虚拟内存的方式读写文件。
+		 void *mmap(void *ptr,
+		 						size_t len,
+		 						int prot,
+		 						int mode,
+		 						int fd,
+		 						off_t offset);
+		 7.1.获取文件大小.
+		 			fstat 获取文件状态
+		 			函数说明：
+		 				int fstat(int fd,//文件描述符号
+		 						struct stat*buf);//返回文件属性结构体
+		 				返回：
+		 						0：成功
+		 						-1:失败		
+		 				重点：struct stat结构体。
+		 	案例：
+		 			计算wtmpx的记录条数。
+
+		 			
+补充：
+			把一个分拣拆分成多个文件
+						split 被拆分文件  拆分后文件1 	拆分后文件2	 	 					
+		 7.2.把文件清空.
+		 			ftruncate修改文件大小。
+		 			int ftruncate(int fd,//被改变文件描述符号
+		 						size_t size)//改变后文件大小
+		 			
+		 			返回0:OK
+		 					-1:failed
+		 7.3.删除文件
+		 			int unlink(const char *filename)					
+		 7.4.案例1：
+		 				把文件映射成虚拟内存，写入3条记录
+		 						Tom  18 99.99 m
+		 						Jack 19 88.88 m
+		 						Rose 20 77.77 f
+		 						
+		 
+	
+	8.终端IO（Curses）
+
+
+
+思考：
+	SEEK_SET 位置为-，返回值为0？-1？
+	SEEK_CUR 位置为-，下溢超过文件首，返回0？-1?
+	
+	SEEK_END 位置为-，怎么移动，为+怎么移动。
+		
+作业：
+		1.使用fstat等函数写一个与stat指令一样的程序。
+		2.把使用文件映射写入的数据，使用文件映射读取并打印。
+		
+		
+		
+		
+		

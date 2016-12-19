@@ -1,0 +1,23 @@
+install :
+	rpm -ivh software ...
+					  --test
+					  --noscripts
+					  --justdb
+					  --nosignature
+					  --nodeps
+					  --replacefiles
+					  --replacepkgs
+
+update :
+	rpm -Uvh 
+		-Fvh
+Query :
+	rpm -qa
+		-qp
+		-qi
+		-ql
+		-qd
+		-qR
+		-qf
+
+

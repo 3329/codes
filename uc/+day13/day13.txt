@@ -1,0 +1,187 @@
+回顾：
+		线程与进程
+		1.进程由于资源独立，进程的主要关注是解决资源共享
+		2.线程先天是数据共享,线程主要关注共享数据脏
+				1.互斥量(线程内)
+						 读写锁
+				
+				2.信号/条件量调度(线程之间)
+					信号量
+
+一.线程的信号量
+		1.定义信号量sem_t
+		2.初始化信号量sem_init
+		3.操作信号量sem_post  sem_wait
+		4.释放信号量sem_destroy		
+		5.其他函数sem_getvalue
+案例:
+		创建一个子线程
+				子线程-信号量(阻塞)
+				主线程+信号量(解除阻塞)
+		体会:
+				信号量可以累加
+				+-操作单位是1
+作业:
+		摇奖程序,继续暂停7位随机数
+		信号量/条件量/信号?
+		目的:选择哪种技术实现?
+				1.无法使用互斥与读写锁实现.
+				2.信号实现不稳定.
+				3.没有互斥建议不考虑条件量.
+				4.最佳选择信号灯.		
+二.线程的读写锁(自学)
+		pthread_rwlock_t;
+		
+		pthread_rwlock_init;
+		pthread_rwlock_destroy;
+		
+		pthread_rwlock_rdlock;
+		pthread_rwlock_wrlock;
+		pthread_rwlock_unlock;
+		
+		读读兼容
+		写写互斥
+		读写互斥
+		
+		
+		作用主要是为IO操作设计.
+		
+			
+三.线程私有数据(了解)
+		pthread_key_create
+		pthread_key_delete
+		
+四.QT
+1.工具
+		assistant  帮助文档
+		qtconfig	 QT配置工具
+		qmake			 QT的make与项目文件智能创建工具
+		uic				 UI界面的设计文件的编译工具
+		moc				 moc代码创建工具
+		designer	 UI设计工具
+2.QT 的模块
+		qtcore
+		qtgui
+		qtnetwork		
+		qtsvg
+		qtopengl
+
+3.第一QT程序
+		1.QT编程模型
+		2.QT程序编译过程
+		3.QT的项目组织
+注意:		
+	1.QT是C++程序.		
+	2.QT程序启动QT的环境QApplication
+	3.编程的模型
+			qmake -project
+			qmake *.pro
+			make
+			执行
+4.*.pro文件
+		TEMPLATE=
+				:app 应用程序
+				:lib 库
+		SOURCES=
+				:cpp文件1 cpp文件2 cpp文件3 ....
+				:\ 续行符号
+				:SOURCES+=
+		HEADERS=
+				:h头文件
+		CONFIG=   影响gcc的选项
+				:release | debug
+				:warn_on | warn_off   -Wall -w
+				:qt | opengl  
+				:shared  | static	
+		QT=		(该变量在CONFIG=qt时才有意义)
+				:core//默认属性	
+				:gui//默认属性
+				:network	
+				:opengl
+				:svg
+				:xml
+				:sql
+		TARGET=    
+				:输出文件名 (-o输出文件)
+		LIBS=用户指定库
+				:-l  -L
+		FORMS=ui文件
+
+5.怎么学习QT	
+		QT类的结构层次.
+		QT的信号signal与槽slot.
+		QT基本组件
+		QT的UI设计器
+
+五.直观认识QT
+		封装与帮助文档的使用
+		1.文档的组成部分:
+				1.模块
+				2.类作用简单描述		
+				3.头文件
+				4.父类与派生类
+				5.构造器/析构器()
+				6.共有函数
+				7.属性
+		2.乱码处理
+			QT提供翻译机制
+			QTextCodec
+		
+		3.代码组织
+			以窗体为基本单位的封装
+案例:
+		登录
+			QDialog
+			QPushButton
+			QLabel
+			QLineEdit	
+			
+		4.QT的界面设计器
+				designer
+				4.1.工具视图:
+						用户设计区
+						工具箱						
+						资源管理器
+						属性编辑器(ctrl+i)
+						动作编辑器
+						信号槽编辑器
+						对象察看器(选择对象)
+				4.2.保存文件
+						*.ui		
+				
+				4.3.编辑属性
+						1.文本属性
+						2.对象名属性
+						3.字体属性		
+				4.4.编辑组件
+						->  <-方向
+						shift+
+						ctrl+
+						shift+ctrl+
+				4.5.打开ui文件
+						ui是xml文本文件
+				4.6.使用ui文件
+						自动使用
+						手工使用
+						uic编译ui文件
+						产生:Ui_对象名的类
+								Ui::对象名的类
+						
+						类的构造器:没有(缺省构造器)
+						类的方法:setUi(QDialog *);		
+								
+				4.7.使用UI类型						
+作业:
+			1.完成计算器的界面
+			
+			思考:
+			2.创建线程?不停调用文本组件的setText()修改文本?
+				
+
+				
+		
+						
+				
+						
+				
+									

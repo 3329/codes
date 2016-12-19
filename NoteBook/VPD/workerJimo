@@ -1,0 +1,20 @@
+jimo_doc:
+	直接写在数据库中
+<jimo zky_objid="jimo_young" zky_libname="libCommandProc.so" zky_classname="AosCmdProcSimple" current_version="1.0" called_jimo_objid="jimo_young" zky_otype="zkyotp_jimo" zky_pctrs="Felicia" zky_siteid="100" zky_docid="7320" zky_crtor="10000075" zky_ctime="08-15-2013 10:41:27" zky_ctmepo__d="1376534487" zky_mtime="08-15-2013 14:52:44" zky_mtmepo__d="1376549564" zky_musr="10000075" zky_fulldoc_sig="MFQl5cObt3mk73ZqaIJgBi2KgUc="><versions current_version="1.0"><ver_1_0 version="1.0">libCommandProc.so</ver_1_0></versions></jimo>
+
+
+worker_doc: 
+	页面绑定数据,通过点击button来获取
+<embedobj machines=\"0\" all=\"true\"><command_def cmd_id=\"command_def\">pwd; ls -l</command_def></embedobj>
+
+
+How to bind the value on the page.
+	1. input 
+	2. 	@type
+		@machines
+		@all
+	3. node : 
+			command_def/@cmd_id
+	4. text
+		command_def/_#text
+

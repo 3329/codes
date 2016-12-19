@@ -1,0 +1,10 @@
+Linux network config:
+
+	------------------------------------------------------------------------------
+	所需网路参数		主要设定文件文件名							重要参数
+	IP
+	Netmask		
+	DHCP(Y/N)			/etc/sysconfig/network-scripts/ifcfg-eth0
+	GateWay
+	...
+

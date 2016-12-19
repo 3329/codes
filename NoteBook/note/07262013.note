@@ -1,0 +1,25 @@
+#ifndef AOS_Util_KeyedNode_h
+#define AOS_Util_KeyedNode_h
+
+// 07/26/2013 Created by young
+class AosKeyValuePair 
+{
+	AosKeyValuePair(const OmnString pline);
+
+	// 1. when u call this function, it will return a vector<AosKeyValuePair>
+	static vector<AosKeyValuePairPtr> createPairs(
+					const AosRundataPtr &rdata, 
+					const OmnString &contents);
+
+	// format like this 	key:value 
+	// 2. it return the key and the key will be trimed.
+	OmnString getKey();
+	
+	// 3. it return the value 
+	OmnString getValue();
+
+};
+#endif
+
+
+

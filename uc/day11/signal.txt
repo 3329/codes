@@ -1,0 +1,124 @@
+
+#define SIGHUP   1 
+进程由於控制终端死去或者控制终端发出起命令 
+#define SIGINT   2 
+键盘中断所产生的信号 
+
+#define SIGQUIT   3 
+键盘终止 
+
+#define SIGILL   4 
+非法的指令 
+
+#define SIGTRAP   5 
+进程遇到一个追踪(trace)或者是一个中断嵌套 
+
+#define SIGABRT   6 
+由abort系统调用所产生的中断信号 
+
+#define SIGIOT   6 
+类似於SIGABRT 
+
+#define SIGBUS   7 
+进程试图使用不合理的记忆体 
+
+#define SIGFPE   8 
+浮点异常 
+
+#define SIGKILL   9 
+KILL 
+
+#define SIGUSR1  10 
+用户自定义 
+
+#define SIGSEGV  11 
+段错误 
+
+#define SIGUSR2  12 
+用户自定义 
+
+#define SIGPIPE  13 
+管道操作时没有读只写 
+
+#define SIGALRM  14 
+由alarm系统调用产生的timer时钟信号 
+
+#define SIGTERM  15 
+收到终端信号的进程 
+
+#define SIGSTKFLT 16 
+堆叠错误 
+
+#define SIGCHLD  17 
+子进程向父进程发出的子进程已经stop或者终止的信号 
+
+#define SIGCONT  18 
+继续运行的信号 
+
+#define SIGSTOP  19 
+stop 
+
+#define SIGTSTP  20 
+键盘所产生的stop信号 
+
+#define SIGTTIN  21 
+当运行在後状态时却需要读取stdin的资料 
+
+#define SIGTTOU  22 
+当运行在後状态时却需要写向stdout 
+
+#define SIGURG  23 
+socket的紧急情况 
+
+#define SIGXCPU  24 
+进程超额使用CPU分配的时间 
+
+#define SIGXFSZ  25 
+进程使用了超出系统规定文件长度的文件 
+
+#define SIGVTALRM 26 
+内部的alarm时钟过期 
+
+#define SIGPROF  27 
+在一个程式段中描绘时钟集过期 
+
+#define SIGWINCH 28 
+终端视窗的改变 
+
+#define SIGIO  29 
+非同步IO 
+
+#define SIGPOLL  SIGIO 
+pollable事件发生 
+ 
+
+
+名称          	默认动作	说明
+SIGHUP  	终止进程    	终端线路挂断
+SIGINT  	终止进程    	中断进程
+SIGQUIT 	建立CORE文件	终止进程，并且生成core文件
+SIGILL  	建立CORE文件    非法指令
+SIGTRAP 	建立CORE文件    跟踪自陷
+SIGBUS  	建立CORE文件    总线错误
+SIGSEGV 	建立CORE文件    段非法错误
+SIGFPE  	建立CORE文件    浮点异常
+SIGIOT  	建立CORE文件    执行I/O自陷
+SIGKILL 	终止进程    	杀死进程
+SIGPIPE 	终止进程    	向一个没有读进程的管道写数据
+SIGALARM        终止进程    	计时器到时
+SIGTERM 	终止进程    	软件终止信号
+SIGSTOP 	停止进程    	非终端来的停止信号
+SIGTSTP 	停止进程    	终端来的停止信号
+SIGCONT 	忽略信号    	继续执行一个停止的进程
+SIGURG  	忽略信号    	I/O紧急信号
+SIGIO   	忽略信号    	描述符上可以进行I/O
+SIGCHLD 	忽略信号    	当子进程停止或退出时通知父进程
+SIGTTOU 	停止进程    	后台进程写终端
+SIGTTIN 	停止进程    	后台进程读终端
+SIGXGPU 	终止进程    	CPU时限超时
+SIGXFSZ 	终止进程    	文件长度过长
+SIGWINCH        忽略信号    	窗口大小发生变化
+SIGPROF 	终止进程    	统计分布图用计时器到时
+SIGUSR1 	终止进程    	用户定义信号1
+SIGUSR2 	终止进程    	用户定义信号2
+SIGVTALRM       终止进程    	虚拟计时器到时

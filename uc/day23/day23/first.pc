@@ -1,0 +1,18 @@
+#include<stdio.h>
+#include <sqlca.h>
+main()
+{
+  char *user="openlab1";
+  char *pass="open123";
+  /*连接*/
+  EXEC SQL CONNECT :user IDENTIFIED BY :pass;
+  if(sqlca.sqlcode==0){
+    printf("连接成功!\n");
+  }
+  else{
+   printf("连接失败!\n");
+  }
+  /*关闭连接*/
+  EXEC SQL COMMIT RELEASE;
+}
+

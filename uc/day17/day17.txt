@@ -1,0 +1,213 @@
+一.线程同步（重点:难点）	
+	1.同步
+			1.1.信号
+			a.线程中信号的体会
+				信号与线程有关吗？
+				回顾：sleep pause影响当前线程。
+							不会对整个进程产生影响。
+				结论：
+							信号的处理与线程无关
+							作用在整个进程中
+			b.线程中引入一个信号与线程关联的函数
+		int	pthread_kill(pthread_t tid,int sig);
+				
+				这个函数发送信号给指定进程。
+			
+			c.使用信号控制线程
+					信号+sleep/pause=控制进程
+					信号+sleep/pause=控制线程？	
+			d.信号同步引入sigwait信号等待
+					int sigwait(const sigset_t *sigs
+											int *restrict sig);
+					参数1：要等待的信号队列
+					参数2：返回发生的信号
+					
+					sigwait返回：等待队列中的信号有一个发生
+			
+			e.sigwait与pthread_kill问题
+					当线程不再sigwait这个时间段，线程接收到pthread_kill发送的信号，则线程会自动被进程缺省处理。
+					分析：
+							sigwait本身进行了信号处理
+			f.结论：
+					使用sigwait+pthread_kill同步线程的时候必须考虑时间对应。		
+												
+			1.2.信号量
+			a.信号量解决了时间对应的条件。
+					因为信号量使用不是信号而是共享内存。
+			b.线程信号量的编程模型（类似进程信号量）
+					b1.声明信号量  			sem_t
+					b2.初始化信号量			sem_init
+					b3.操作信号量
+							+操作(解除阻塞) 	sem_post
+							-操作(阻塞)		  sem_wait
+					b4.获取信号量的值		sem_getvalue
+					b5.释放信号量				sem_destroy		
+			c.信号量与信号在线程同步中的问题
+					信号量|信号+互斥=死锁
+					解决方案：
+							条件量
+					
+			1.3.条件量
+			a.条件背景：
+					线程同步+互斥->一定使用条件量
+			b.编程模型
+					b1.声明条件量pthread_cond_t
+					b2.初始化条件量pthread_cond_init
+					b3.利用条件量等待pthread_cond_wait
+					b4.解除条件量等待(解除一个,解除所有)
+								pthread_cond_signal
+								pthread_cond_broadcast
+					b5.释放条件pthread_cond_destroy
+					
+	2.互斥
+		 	1.4.互斥量
+		 			要么执行，要么不执行
+		 			
+		 	1.5.读写锁
+		 			锁定状态分：读锁，写锁
+		 			互斥状况：
+		 					读 读 相容
+		 					写 写 相斥
+		 					读 写 相斥
+		 			编程模型
+		 				a.声明读写量pthread_rwlock_t
+		 				b.初始化	读写量pthread_rwlock_init
+		 				c.根据需要加读锁/写锁
+		 						pthread_rwlock_rdlock
+		 						pthread_rwlock_wrlock
+		 				d.解锁
+		 						pthread_rwlock_unlock
+		 				e.释放读写量pthread_rwlock_destroy
+			案例：
+					体会互斥的状况。
+					读读读
+					写写写
+					读读写/写写读
+	3.线程的封装
+			案例：
+								
+						
+二.make与makefile脚本
+		回顾：
+				a.make命令的使用
+						-f  make脚本文件，如果多个脚本使用			多个-f指定
+						-I	make脚本文件查找目录
+						-t  make强制调用touch指令更新目标脚		本
+					make 选项  目标
+					没有-f，默认文件GNUMakefile makefile
+									Makefile
+					没有目标，默认第一个目标
+				b.Make脚本语法
+					 注释
+					 目标
+					 目标依赖
+					 目标与文件
+					 伪目标
+					 					
+					如果需要，可以使用续行符号 \	
+	1.变量
+		1.1.定义变量
+				变量名=值
+		1.2.使用变量
+				$(变量名)
+				如果没有歧义，（）可以省略
+		1.3.变量定义的其他方式
+		变量名:=值或者变量(右边变量马上展开）
+		变量名?=值或者变量(只有没有定义才赋值）
+		变量名+=值或者变量(在已经定义变量后追加值）		
+		1.4.多行变量的定义		
+				define 变量名
+					内容
+					...
+				endef	
+		1.5.MAKEFILE_LIST变量
+				存放-f 指定的文件
+				存放include指定的文件			
+		1.6.make中默认支持的变量
+				MAKEFILES
+				CC
+				CXX
+				RM
+				AR
+				ARFLAGS
+				CFLAGS
+				CXXFLAGS
+				默认变量未必一定存在，视make的配置而定。
+				
+				如果没有默认，用户定义这些变量，也可以影响make的作用。
+				建议开发人员把上述变量定义在登录shell脚本脚本中。
+		1.7.环境变量在Make脚本是开发的
+				在make脚本中可以使用任意的系统环境变量	
+		
+		1.8.特殊变量
+				$@
+				$<
+				$+
+				$^
+				$?
+				$(@D)
+				$(<D)
+				$(+D)
+				$(^D)
+				$(?D)
+				
+				$(@F)
+				$(<F)
+				$(+F)
+				$(^F)
+				$(?F)
+		1.9.替换
+				变量:= $(变量:原字符=替换字符)
+							把变量中原字符替换成替换字符
+				变量:= $(变量:%.o=%.c)
+							匹配单词进行替换	
+							
+						
+	2.函数
+	
+三.QT基础
+	1.QT编程模型
+		第一QT程序
+		1.1.初始化QT
+			a.构造器
+			QApplication(int args,char **argv);	
+			b.成员方法exec
+			保证所有图形窗体线程退出，该函数才返回。
+		1.2.窗体	QWidget （可视化组件的父类）
+					resize(宽，高)
+					move(x坐标,y坐标)
+					setVisible(true);
+		1.3.编译过程
+				qmake -project
+				qmake
+				make
+												
+
+作业：
+	1.理解线程封装，你自己是否有更好的封装方法。
+			问：怎么封装sleep?pause?pthread_exit
+					pthread_cancel与pthread_testcancel?
+					pthread_self
+	2.在自己的及其上安装QT。
+			写一个QT窗体。
+							
+	
+补充：
+		Linux的安装有如下方式：
+				1).bin					
+				2).rpm
+				3).源代码安装
+				
+		源代码安装
+				a.解压
+				b.执行	configure 
+						configure -prefix=安装路径
+						比如:
+						./configure -prefix=/opt/qt4
+				c.编译连接
+						make 
+				d.安装
+						make install
+												
+						
+					

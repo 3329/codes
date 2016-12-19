@@ -1,0 +1,250 @@
+补充：
+				
+二.信号的处理与发送信号
+	5.高级信号发送与处理
+		5.1.sigaction信号高级处理函数
+			作用=signal
+			高级功能：
+				屏蔽信号的功能
+					进程随时会被信号中断。
+					信号中断处理函数执行的时候还会被中断吗？中断。但不被本身处理的信号中断。
+					怎么防止中断函数被其他信号中断。信号屏蔽（sigprocmask）。
+					sigaction信号屏蔽功能自动完成，不会显式调用sigprocmask。
+				接收数据的功能
+				函数说明：
+	int sigaction(int sig,//处理的信号
+		const struct sigaction *act,//信号处理函数与屏蔽信号的设置
+		struct sigaction *oldact);//返回原来的处理函数与屏蔽信号
+	
+	返回:0成功
+			-1失败
+		struct sigaction
+		{
+			void (*sa_handler)(int);//不发送数据的信号处理函数
+			void (*sa_sigaction)(int,const struct siginfo_t*,void *);//发送数据的信号处理函数
+			
+			sigset_t mask;//指定信号处理函数在执行的 时候屏蔽的信号集合
+			int sa_flags;//要么SA_SIGINFO 要么0
+			void *(sa_restorer)();//保留参数
+		}
+	案例：
+			使用sigaction处理信号。
+			使用kill发送信号。
+			主要目的：
+					学习sigaction的使用
+					sigaction=signal
+					
+		5.2.sigqueue信号高级发送函数				
+				作用=kill
+				高级功能：
+						发送数据的功能
+				int sigqueue(pid_t pid,//信号发送目标进程，
+						int sig,//发送的信号
+						union sigvalue val)//发送信号的同时传递的数据
+				
+				
+				传递的值：
+					整数
+					指针（只在父子进程中使用
+						或者在shared映射内存中使用）
+
+一、进程间通信(IPC)
+		Inter-Process Communication
+		1.前面已知的进程通信方式
+				在不同进程打开同一个文件交换数据.
+				在父子进程映射同一个共享区域交换数据
+				在不同进程之间使用信号交换
+			结论：
+					IPC技术基本上基于两个基本的技术：
+							文件/内存	
+		2.Unix/Linux中IPC技术整体结构与思路
+			2.1.基于文件
+						a.普通文件(无序)
+						b.有序文件(管道[单工])
+								b1.任何进程之间（有名管道）
+								b2.父子进程之间（匿名管道）
+						c.有序文件（Socket文件[双工]）		
+								c1.任何进程之间（有名socket）	c2.父子进程之间（匿名socket）	
+					
+					管道文件与socket是大小为0的文件。
+					所有内容在内核缓冲中。管道关闭后数据会消失。（不持久存储数据）					
+										
+			2.2.基于内存
+					 a.映射
+					 		a1.父子进程之间（匿名映射）
+					 		a2.任何进程之间（有名映射）
+					 b.共享内存shm（无序）
+					 c.共享队列		 (有序)
+			
+			
+			2.3.同步：
+					a.信号同步
+					b.信号量同步(特殊共享内存[整数数组]同步)
+			
+二.管道 
+		1.有名管道
+				mkfifo函数创建有名管道文件
+				A						B
+				建立管道		mkfifo			
+				打开管道					打开管道   open
+				使用管道					使用管道   write/read
+				关闭管道					关闭管道   close	
+				删除管道		unlink
+		案例：
+				A 进程读数据     B进程发送数据		
+				
+		2.匿名管道
+				适用范围:父子进程
+				函数说明
+				int pipe(int fd[2]);
+				返回：
+						0：成功 -1：失败
+				参数：返回两个文件描述符号
+							fd[0] 读
+							fd[1] 写
+				fork对fd[2]进行克隆
+				
+				pipe建立匿名管道文件，打开返回两个文件描述符号。
+			案例：
+					父子进程：	
+							父进程读/子进程写
+					
+					
+三.共享内存
+		1.共享内存的原理
+					A创建共享内存需要一个KEY
+					创建共享内存会根据KEY生成一个唯一的ID
+					
+					
+					B使用KEY获取ID
+					
+					问题:KEY怎么约定：
+							把唯一字符串转换成整数
+							Unix与Linux有一个函数把字符串（目录/文件）转换成KEY
+								
+					
+		2.编程模型
+				约定文件（推荐当前目录）
+					A	B
+		ftok	 使用约定文件创建KEY	使用约定文件创建KEY
+		shmget  使用KEY创建共享内存	使用KEY获取共享内存ID
+		shmat	 挂载到共享内存		挂载到共享内存
+			 使用内存		使用内存
+		shmdt	 卸载共享内存		卸载共享内存
+		shmctl  释放共享内存
+			问题：保证B挂载的共享内存与A是同一个内存
+		3.函数说明
+		key_t ftok(const char *filename,int proj);	
+				最后一个参数建议在0-255
+				
+		int shmget(key_t key,
+				       size_t size,
+						int flg);//创建共享内存的方式
+			创建方式两部分构成：
+						模式|权限
+						模式:创建IPC_CREAT  获取 O
+						     创建时为了防止覆盖：IPC_EXCL			
+						权限：0777(推荐0666)
+			返回:
+					-1:失败
+					否则返回共享内存ID。
+	
+		void *shmat(int shmid,//共享内存ID
+						 void *ptr//指定挂载的虚拟首地址
+						 int flg);//挂载方式
+			返回挂载虚拟地址
+		第三个参数：
+			   建议使用0：默认方式挂载：读写，系统指定首地址
+							 
+		int shmdt(void *ptr);
+		卸载共享内存
+	
+		int shmctl(int shmid,//共享内存ID
+			    int cmd， //对共享内存的操作
+			    struct shmid_ds *buf);//这个参数对某些操作有意义
+		命令：
+				IPC_RMID 该命令第三个参数无意义
+				IPC_STAT	该命令返回共享内存状态，返回存放在第三个参数
+		shmid_ds结构体：
+			
+			
+			案例：
+					查询上面建立的共享内存，查询完毕删除共享内存。
+						
+		//操作共享内存的属性
+		//删除共享内存,获取共享内存的属性
+	
+		得到共享内存ID：
+			1.知道约定的目录与整数
+			2.根据目录与整数得到KEY
+			3.根据KEY得到ID
+	
+		ipcs -a 显示所有共享内核对象  a=all
+
+		ipcs -m 显示共享内存   	m=memory
+		ipcs -q 显示共享队列	   	q=queue
+		ipcs -s 显示信号量		s=semaphore	
+	
+	
+		ipcrm -m ID  删除共享内存
+		ipcrm -q ID  删除共享队列
+		ipcrm -s ID  删除信号量
+	
+	案例：
+		A创建一个共享内存
+		
+		使用ipcs查看 
+		
+		B获取共享内存ID	
+					
+
+四.共享队列
+		1.编程模型
+		A			B
+		创建共享队列 		得到共享队列 msgget
+		接收队列消息msgrcv	发送队列消息 msgsnd
+		删除共享队列msgctl
+		
+		int msgget(key_t key,int flg);
+		int msgsnd(int msgid,
+			    const void *buf,
+			    size_t size,
+			    int flg);//阻塞与非阻塞
+					0     IPC_NOWAIT
+			第二个参数：
+				消息void *buf
+				消息格式：前long个字节表示消息的队列编号,后面才是消息
+			第三个参数：
+				消息大小，但不包含消息格式中的前long个字节的大小										
+	        int msgrcv(int msgid,
+				void *buf,
+				size_t size,
+				long type,//消息的队列编号
+				int flg);
+		
+		int msgctl(int msgid,,int cmd, struct msgid_ds *buf);
+									
+		2.难点：
+				队列消息的格式。
+				long 队列编号
+				char[] 任意长的数据
+				
+
+五.进程同步
+		1.信号
+		2.信号量semphore
+							 
+					 		
+六.Socket通信
+
+
+
+作业1.：
+			创建共享内存，并打印共享的内存的状态。
+			
+		2.写一个单向数据传送程序
+			A程序，等待B程序发送数据，接收后，显示。
+			B程序，从键盘输入信息，发送给A。
+			要求：
+						共享内存与消息队列实现。
+								

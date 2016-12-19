@@ -1,0 +1,23 @@
+Remote execute the command
+
+Dir : src/JobTrans/RemoteCmdTrans.cpp
+
+	1,cp WriteFileTrans.h WriteFileTrans.cpp
+	2.修改类名  AOS/src/Actions/AllJobTrans.cpp 中new 一个静态变量(记住引入相应的头文件)
+	3.在 ~/AOS/src/SEInterfaces/TransType.h 定义Action name 
+
+
+
+If we want to send data to remote server, we need three functions
+	1. serilizeTo(const AosBuffPtr &buff)
+		send data to the remote server ...
+			data is the command string ...
+
+	2. serilizeFrom(const AosBuffPtr &buff)
+		get data at the remote server ...
+			data is the command string ...
+			
+	3. proc()
+		3.1 execute the command
+		3.2 return the results
+		

@@ -1,0 +1,10 @@
+	window._wp_rp_static_base_url = 'http://dtmvdvtzf8rz0.cloudfront.net/static/';
+-------------------
+	window._wp_rp_wp_ajax_url = "http://coolshell.cn/wp-admin/admin-ajax.php";
+-------------------
+	window._wp_rp_plugin_version = '2.8';
+-------------------
+	window._wp_rp_post_id = '10337';
+-------------------
+	window._wp_rp_num_rel_posts = '8';
+-------------------

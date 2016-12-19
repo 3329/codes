@@ -1,0 +1,7 @@
+<jimo zky_libname="libJimoRandomNum.so" zky_classname="AosJimoRandomNumGen" zky_objid="young_test_jimo" zky_siteid="100" zky_otype="zky_unknown" zky_pctrs="_zt3k_zky_unknown" zky_crtor="10000075" zky_ctime="06-04-2013 14:46:36" zky_mtime="06-04-2013 14:46:36" zky_ctmepo__d="1370328396" zky_mtmepo__d="1370328396" zky_docid="6364" zky_fulldoc_sig="0SgZ+C4oEp0mF5UHHIhU3j4p9n8="/>
+
+
+//This is smartDoc
+"<embedobj num=\"123\" called_jimo_objid=\"young_test_jimo\" zky_method=\"data_phrase\"><ranges><range type=\"range\" weight=\"200\" min=\"10\" max=\"50\" rangetype=\"range\"/><range1 rangetype=\"range\" start=\"10\" type=\"sequence\" end=\"50\" weight=\"200\" step=\"2\"/><range2 weight=\"200\" type=\"enum\"><![CDATA[10,20,30,40]]></range2><range3 weight=\"200\" type=\"rpick\"><![CDATA[10,20,30,40]]></range3></ranges></embedobj>"
+
+

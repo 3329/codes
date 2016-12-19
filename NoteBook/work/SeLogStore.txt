@@ -1,0 +1,14 @@
+1. run  run.sh
+	dir: /home/young/AOS/java/tools/run.sh
+
+2. Then it will be make a log , and the program 
+	will can SeLog Obj
+
+3. it will call the SeLogStore();
+	SeLogStore->init() : put the xmlDoc into the headerfile
+	if not have xmlDoc ,the headerfile will be null.
+	
+4. the SeLogStore have two memory function:
+		addLog(const OmnString &loginfo):  use for add a log 
+		getLog(const u64 logid)         :  use for get a log by logid
+					

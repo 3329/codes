@@ -1,0 +1,20 @@
+<sdoc zky_otype="zky_smtdoc" zky_public_doc="true" zky_public_ctnr="true" zky_objid="sdoc_young_PMNumber_0530" dll_libname="libJimoPMNumber.so" zky_classname="AosJimoPMNumber">
+<phrasemaker ranges="xxx" datatype="xxx" num="50">
+<ranges>
+<range type="range" weight="200" min="0" max="100" rangetype="xx"/>
+<range type="sequence" weight="100" start="39" end="78" step="2" rangetype="xx"/>
+<range type="enum" weight="0" rangetype="xx">dd,dd,dd,...</range>
+<range type="rpick" weight="0" rangetype="xx">dd,dd,dd,...</range>
+</ranges>
+</phrasemaker>
+</sdoc>
+
+
+
+
+
+
+
+// 05-31 
+
+doc zky_otype="zkyotp_jimo" zky_objid="sdoc_young_PMNumber_0530" zky_libname="libJimoPMNumber.so" zky_classname="AosJimoPMNumber" zky_pctrs="_zt3k_zky_smtdoc" zky_sdoctp="runjimo" zky_interface="run_with_sdoc" zky_siteid="100" zky_crtor="10000075" zky_ctime="05-31-2013 14:16:39" zky_mtime="05-31-2013 14:16:39" zky_ctmepo__d="1369980999" zky_mtmepo__d="1369980999" zky_docid="6209" zky_fulldoc_sig="jHV+GShE7+AvCRYE3AQmAtCNPUM="><phrasemaker ranges="xxx" datatype="xxx" num="50"><ranges><range type="range" weight="200" min="0" max="100" rangetype="xx"/><range type="sequence" weight="100" start="39" end="78" step="2" rangetype="xx"/><range type="enum" weight="0" rangetype="xx">dd,dd,dd</range><range type="rpick" weight="0" rangetype="xx">dd,dd,dd</range></ranges></phrasemaker></sdoc>

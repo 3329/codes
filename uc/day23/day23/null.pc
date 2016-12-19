@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <sqlca.h>
+#include <stdlib.h>
+main()
+{
+	char *acct="openlab/open123";
+	float pct;
+	int id=11;
+	short idx_pct;
+	
+	exec sql connect :acct;
+	if(sqlca.sqlcode<0){
+		printf("连接失败!\n");
+		exit(-1);
+	}
+	
+	exec sql select commission_pct into :pct:idx_pct 
+			from s_emp where id=:id;
+	if(sqlca.sqlcode>=0){
+		if(idx_pct==-1)
+			printf("id=%d,null\n",id);
+		if(idx_pct==0)
+			printf("id=%d,%.2f\n",id,pct);
+		if(idx_pct>0)
+			printf("id=%d,%.2f,实际长度是:%d\n",id,pct,idx_pct);
+		if(idx_pct==-2)
+			printf("id=%d,%.2f,实际长度未知！\n",id,pct);		
+	} 
+	else{
+		printf("查询失败!\n");
+	}
+	
+	exec sql commit release;
+}
+

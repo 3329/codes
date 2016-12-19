@@ -1,0 +1,25 @@
+MAC					IP				FAHN(完整的计算机名称)
+数据链路层 			网络层			应用层
+00:0c:29:3d:34:A8	192.168.99.85	www.google.com
+厂商标识			IPv6  128		
+
+DOS : 拒绝服务攻击  AYNFLOOD
+
+A				B
+----------------> SYN
+<---------------- ACK/SYN
+----------------> ACK
+
+TCP/IP
+TCP 可靠, 3次握手(断点重发,定时器)
+UDP 速度快
+
+ARP			地址解析协议
+arp -a : 查看ARP缓存表
+arp -d IP : 删除ARP记录
+arp -s IP MAC : 添加ARP静态记录 
+
+
+RARP		反向地址解析协议
+知道自己的MAC地址,去询问自己的IP地址
+

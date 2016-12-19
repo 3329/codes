@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <sqlca.h>
+
+main()
+{
+  char *account="openlab/open123";
+  char name[30];
+  double salary;
+  int id=1;
+  EXEC SQL CONNECT :account;
+  if(sqlca.sqlcode==0){
+    /*query the result*/
+    EXEC SQL SELECT xing,salary 
+       INTO :name,:salary FROM s_emp
+       WHERE id=:id;
+    if(sqlca.sqlcode>=0){
+      printf("first_name:%s,salary:%f\n",name,salary);
+    }
+    else{
+       printf("query error!\n");
+    }
+  }
+  else{
+    printf("connect failed!\n");
+  }
+  EXEC SQL COMMIT RELEASE;
+}
+

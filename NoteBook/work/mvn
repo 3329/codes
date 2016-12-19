@@ -1,0 +1,3 @@
+mvn install (mvn compile)
+java -cp repo/target/* org.testng.TestNG conf/reliabilitytest.xml
+

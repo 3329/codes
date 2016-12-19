@@ -1,0 +1,3 @@
+<jimo zky_otype="zkyotp_jimo" zky_public_doc="true" zky_public_ctnr="true" zky_worker_objid="andy_test_jimo" zky_sdoctp="runjimo" zky_libname="libJimoCharacterString.so" zky_interface="run_with_sdoc" zky_classname="AosJimoCharacterString" type="ascii_str" prefix_charset="96:122:50,56:90:50" postfix_charset="96:122:50,56:90:50" body_charset="96:122:50,56:90:50" prefix_length="4:5:50,10:11:50" postfix_length="4:5:50,10:11:50" total_length="10:11:50,20:22:50" zky_objid="sdoc_datagen_seqno2"/>
+
+

@@ -1,0 +1,367 @@
+数据库编程：
+一.了解数据库编程技术
+	1.各种不同数据库
+		服务器文本数据库->单机版数据库->数据库服务器(Oracle,DB2,Informix,sybase,SQL server
+		MySql,...)
+	2.数据库连接技术发展
+		早期：每个厂商提供独自技术（SQL语句，连接）
+		后来：SQL标准+ODBC连接
+					SQL语句+SQL函数
+					PL/SQL编程
+		
+		Oracle=OCI+Pro*C/C+ODBC
+		MS=ODBC+DAO(Local)+RDO(Remote)+ADO+ADO.net
+		DB2=OBDC+...
+
+	pro*c=SQL+C  
+	pro*c++=SQL+C++
+二.PROC数据库编程
+	0.准备工作
+			第一个proc程序
+			0.1.扩展名
+					.pc
+			0.2.proc程序是嵌入SQL语句的C程序
+								
+
+	1.proc工具与编译
+			1.1.预编译
+					proc 
+			1.2.编译连接
+					gcc
+					
+			1.3.嵌入SQL语句
+				嵌入	SQL语句不区分大小写
+				嵌入式SQL语句exec sql开头
+				在嵌入的SQL语句中，语法遵循SQL语法.
+							字符串还是使用''
+			1.4.变量
+				只在SQL中使用的变量
+				只在C中使用的变量
+	即在C中使用也在SQL中使用的变量：宿主变量host
+				宿主变量使用规则：
+						在C中正常使用。
+						在SQL使用:变量名。
+			1.5.头文件
+					sqlca.h
+			1.6.库文件
+					libclntsh.so
+					
+					-lclntsh
+			1.7.注释
+					proc程序中，不允许使用行注释
+					// 非法
+					只能使用/**/					
+			1.8.gcc需要的头文件
+				sqlca.h
+				${ORACLE_HOME}/precomp/public
+gcc *.c -omain 
+		-I${ORACLE_HOME}/precomp/public 
+		-lclntsh	
+			
+			1.9.proc工具的选项
+				a.iname=pc文件名  扩展名可选
+					如果iname是第一个选项，iname=可以省略
+			
+				b.oname=输出文件名
+					不能省略扩展名
+				
+				c.code=指定代码语言
+					ansi_c cpp  kr_c	
+				d.mode=指定编译的模式
+					ansi  iso   oracle
+					如果code=cpp，则mode必须=ansi
+				e.parse=解析C/C++语法的程度
+					none
+					partial
+					full
+					如果mode=ansi，则parse必须=none
+				f.include=头文件所在路径
+					多个目录就使用多个选项
+					
+				g.sqlcheck
+							semantics 语义检测
+							
+				h.userid=openlab/open123			
+							配合sqlcheck使用
+			总结：
+			C:  proc基本上不指定
+			C++:proc  code=cpp mode=ansi parse=none	1.10.kr_c变量集中声明在函数前面。
+			1.11.嵌入式SQL一个语句使用；结束。			
+			1.12.数据声明区
+					在C可以不在声明区		
+					在C++所有宿主变量必须在声明区声明。
+					EXEC SQL BEGIN DECLARE SECTION;
+						......
+					EXEC SQL END   DECLARE SECTION;
+					
+	2.数据库连接与关闭
+			
+			exec sql connect 用户 identified by 口令;
+			exec sql connect 用户/口令;		
+			exec sql commit release;
+				
+			
+	3.数据库查询
+			3.1.简单查询
+exec sql select 字段 into 宿主变量 from 表名
+		where 条件  group by 分组 having 条件
+		order by 排序字段			
+	
+	注意：
+			接收宿主变量只能查询一条记录
+			函数命名避免与系统函数冲突。
+			
+		a.单条记录查询
+		b.使用结构体宿主变量
+		c.多条记录查询
+		d.结构体数组查询查询多条记录
+		
+		e.sqlca通信区的使用
+						sqlcode:>=0正确执行
+										>0 表示有结果集
+										<0:错误
+						sqlerrm:只有当sqlcode<0有意义							返回执行错误的原因
+						sqlerrm.sqlerrml 错误字符串长度
+										sqlerrmc 错误的字符串
+						
+						sqlerrd[2]当sqlcode>0的返回实际处理行数
+		f.pro*C++
+			封装类：
+					Db
+							void opendb()
+							void querydb()
+							void closedb()		
+			封装原则：
+				在类的头文件不能出现与proc有关的语法。
+				逻辑：
+						输入员工xing
+						得到员工的薪水
+									
+			注意：
+					f1.C++所有宿主变量必须在声明区声明
+					f2.C++的错误判定强烈建议使用long SQLCODE
+							在proc使用mode=ansi选项，在程序中必须定义long SQLCODE;
+		g.NULL值的查询
+			g1.查询NULL值的问题
+			g2.解决办法：
+					指示变量	
+						指示变量必须是short型
+					使用：
+						必须使用宿主变量后。一个宿主一个。
+						：宿主变量:指示变量		
+					返回：
+						-1：字段为NULL
+						0:字段不为NULL
+						>0:字段不为NULL，但查询的不是全部数据	，指示变量返回全部数据长度
+						-2:字段不为NULL，但查询的不是全部数据	，	数据的实际长度无法确认	
+		h.varchar数据类型
+			h1.字符串查询的问题
+			h2.解决办法：
+					varchar数据类型
+					varchar被proc翻译成结构体.
+							成员 arr
+									 len
+		
+	4.数据库的DML操作
+exec sql insert into 表名 (字段..)values(...);
+
+exec sql update 表名 set 字段=值,字段=值，... 
+			where ..;
+			
+exec sql delete from 表名 where 条件;			
+	
+	5.事务处理
+exec sql commit [release];
+exec sql rollback [release];
+exec sql savepoint 保存点;
+exec sql rollback to 保存点;
+
+练习：
+		插入几条记录。
+		修改，并且删除。
+		提示：注意事务提交。
+
+	
+	6.异常处理
+	异常的两个方面：
+		判定存在异常。
+		异常的原因描述。
+	
+			6.1.方法1
+					直接使用sqlca.sqlcode判别错误
+					sqlca是结构体对象，包含SQL语句执行的所有相关信息。该对象是proc工具自动生成。
+					sqlcode返回SQL执行的状态
+						<0:失败
+						>=0：成功
+						
+					失败错误描述
+					sqlca.sqlerrm.sqlerrmc	
+					sqlca.sqlerrm.sqlerrml
+						
+			6.2.c++的异常处理
+					long SQLCODE;//必须大写，必须long型
+					char SQLSTAT[6];//可选，长度必须是6
+					
+			6.3.嵌入的SQL异常处理
+					exec sql whenever 条件 响应动作;
+					条件：
+							错误:SQLERROR
+							警告:SQLWARNING
+							记录不存在:NOT FOUND(游标查询)
+				
+					响应动作：
+						停止进程：STOP		
+						继续进程：CONTINUE
+						调用过程：DO(有一个特殊的函数BREAK)
+						跳转标签：GOTO 标签名
+					
+					异常处理设置语句：
+							该设置对后面所有SQL语句有效。
+					问题1：
+							sqlca通信区是否继续有效。			
+					问题2：
+							long SQLCODE是否有效。
+					
+	
+	7.数据库游标查询
+		7.1.背景：
+				查询一条记录
+					返回多条，查询失败。
+				查询多条记录【使用数组接收】
+					不知道数组定义多大？
+					客户程序没有足够的空间容纳查询结果
+		7.2.解决方案：
+				游标
+		7.3.什么游标
+				记录的指针位置。
+		7.4.游标分类
+				只读向前游标（最优）
+				只读滚动游标
+				可更新游标（最低）
+		7.5.游标的编程模型
+				定义游标
+exec sql declare 游标名 cursor for 查询语句;
+				打开游标
+exec sql open 游标名				
+				操作游标
+exec sql fetch 游标 into 宿主变量;				
+				关闭游标
+exec sql close 游标;
+	
+			注意：
+				a.游标名是SQL变量，不能是宿主变量。
+				b.fetch操作后，游标位置自动前移。
+				c.游标到达结尾的判定
+exec sql whenever not found do break;
+						
+		7.6.滚动游标
+		定义游标
+exec sql declare 游标名 scroll cursor for 
+			select语句;
+		操作游标
+exec sql fetch 游标 into ...;							
+exec sql fetch next 游标 into ...;
+exec sql fetch prior 游标 into ...;
+exec sql fetch first 游标 into ...;
+exec sql fetch last 游标 into ...;
+exec sql fetch current 游标 into ...;
+exec sql fetch absolute n 游标 into ...;
+exec sql fetch relative n 游标 into ...;
+	
+			游标位置从1开始。
+								
+	8.动态SQL语句
+		动态SQL语句解决的问题：
+				使用字符串变量动态作为SQL语句操作
+		8.1.动态DML语句
+		编程模式：
+				a.SQL语句字符串
+				b.执行字符串SQL语句
+						exec sql execute immediate sql字符串宿主变量;
+				
+		
+		8.2.带参数的SQL语句
+		编程模型：
+				a.定义SQL模板
+exec sql prepare 模板名 from 'SQL模板字符串';	
+				b.执行SQL模板
+exec sql execute 模板名 using :参数,:参数;
+			
+				
+				
+			区别8.1的地方在与可以带参数。
+				
+		8.3.动态的查询SQL语句.
+			编程模型：
+					a.定义select模板
+exec sql prepare 模板名 from '';					
+					b.使用模板定义游标
+exec sql declare 游标名 cursor for 模板名;			
+					c.打开模板游标
+exec sql open 游标 using 模板参数;					
+				=======================	
+					d.操作游标
+					e.关闭游标
+					
+			案例：使用动态SQL语句查询指定ID的员工姓名与薪水。
+			
+
+作业：
+		结合curses写一个查询系统。
+			1.输入员工ID，查询薪水
+					薪水=salary*(1+commission_pct);			
+			
+			2.输入部门名称，查询该部分平均薪水
+			
+			3.把上述1作业，使用C++实现。
+			
+			
+总结：
+		1.什么是proc
+		2.proc工具与环境
+		3.宿主变量与指示变量
+		4.声明区
+		5.连接语句与关闭连接语句
+		6.查询语句
+		7.sqlca通信区
+		8.long SQLCODE
+		  char SQLSTAT[6];
+		9.pro*c++
+			  
+		
+Win32平台下proc编程。
+		1.环境搭建
+			头文件
+				%ORACLE_HOME%/precomp/public
+			库目录与库文件
+				%ORACLE_HOME%/precomp/lib/
+				orasql10.lib
+		2.Win32编译器
+				cl
+			Win32连接器		
+				link
+			Win32脚本工具
+				nmake
+			Win32静态库打包工具
+				lib
+			Win32符号查看
+				bindump
+							
+				
+		3.客户端配置
+			3.1.安装oracle客户端
+			3.2.配置监听器
+			3.3.配置本地服务
+				
+提示：
+		Win32下oracle与Linux/Unix的proc配置有差异。
+		
+		Linux/Unix:code=kr_c
+		Win32:code=ansi_c
+		
+		
+								
+		
+		
+		
+										

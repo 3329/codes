@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <windows.h>
+#include <sqlca.h>
+int main()
+{
+	exec sql begin declare section;
+	char *acct="openlab/open123@tarena";
+	int id=1313;
+	varchar name[30];
+	exec sql end   declare section;
+	
+	exec sql connect :acct;
+	exec sql select name into :name from stu_cbd00
+		where id=:id;
+	
+	name.arr[name.len]=0;
+	printf("%s\n",name.arr);
+	
+	exec sql commit release;	
+	return 0;
+}
+
+

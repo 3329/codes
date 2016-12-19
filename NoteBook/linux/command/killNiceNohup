@@ -1,0 +1,21 @@
+kill
+ 1. kill PID
+ 	kill -9 : 强制关闭
+	kill -1 : 重启进程
+	xkil	: 关闭图形程序
+	killall	: 关闭所有进程
+	pkill
+	pgrep
+
+nice 
+	nice : 指定程序的优先级
+	nice -n command
+
+	renice : 改变一个正在运行的优先级
+	renice n pid
+	优先级的取值范围(-20,19)
+ 
+nohup 
+	使进程在用户退出登录后仍然执行.
+	nohup命令执行后的数据信息和错误信息默认储存在nohup.out中
+	nohuo program &

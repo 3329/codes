@@ -1,0 +1,336 @@
+一.数据库基础 
+	1.背景
+		数据库就是Unix系统中多个文件(数据文件)
+		PC数据库：access，foxpro，dbase(数据库文件+管理系统)
+		数据库服务器：Informix,DB2,Oracle,SQLServer							,MySql,....	（数据库文件+管理工具+远程网络服务）
+	2.数据库工作的基础
+		数据库是相关联的数据。
+				集合:表(TBALE)+记录	
+				表：若干字段构成的数据记录
+				表：table,字段:field，记录:record
+				
+				关系：表与表的关联
+							有意义的关系.
+							
+							最平凡的关联关系：笛卡尔关联
+							
+				数据库基本原理：
+						关系数据库
+				结果：
+						任何表都是通过关系关联，用户可以从任何一个字段开始，找到数据库中需要的任何数据。					
+							
+	3.学习SQL的关键：
+			描述表
+			描述表的关系		E-R图
+			
+			添加删除修改查询记录
+			
+	4.数据库：
+			数据文件+管理系统+数据库访问API			
+			DBFile+DBMS=数据库服务器
+				|
+			 表---|
+						|-字段
+						|-记录
+	5.DBMS:
+			|-数据库文件的操作
+			|-用户操作UI
+			|-远程网络服务
+			|-数据库专门语言的翻译与解释
+								|-SQL（Struct Query Language）
+										|-DDL(Data Defining Language)
+										|-DML(Data Manipulate Language)
+										|-DQL(Data Query Language)
+			用户->SQL语句->客户工具->数据驱动->DBMS->数据库文件
+			
+			程序员->SQL语句->数据驱动->DBMS->数据库文件
+	6.sqlplus工具的使用
+			a.
+			输入sqlplus程序指令
+			输入用户，再输入口令登录成功
+			输入quit退出sqlplus
+			b.
+			sqlplus 用户/口令	
+			c.
+			sqlplus 用户/口令@服务名
+			d.
+			sqlplus /nolog 
+			直接启动sqlplus 但不登录。
+			
+			判定某个Oralce服务名是否配置存在
+			tnsping Oralce服务名
+			远程数据库工具必须配置：监听器+网络服务名
+			
+			本机使用不需要配置：默认安装，默认数据库SID
+			
+			d.SQLPLUS的指令：
+					SQLPLUS内置指令+SQL语句
+					每条指令结束加分号;
+				试验1:
+					使用内置指令							
+							help index    //显示所有的指令
+							help clear		//显示某个指令
+							clear screen
+							cl scr
+							显示表的定义：
+							desc 表名;
+							
+					使用SQL语句	
+							显示数据库中有多少表
+select table_name from user_tables;
+							
+				注意：SQL语句不加分号，表示语句没有输入完毕，显示二级输入提示符号，等待用户输入完整。
+				
+				d1.host 执行系统指令
+					在windows下可以使用!替换	
+				d2.list 显示缓冲中SQL语句
+								并且设置为当前行
+						有*显示的就是当前行		
+								
+				d3.change 改变缓冲的当前行		
+						c /被修改字符/修改后的字符				
+				
+				
+				d4.执行缓冲中的语句
+						r[un] 	
+						/
+			
+				d5.edit指令
+						启动默认编辑器编辑缓冲
+						一般情况默认编辑器是vi
+				d6.save保存缓冲
+						save 文件名
+				
+				d7.clear
+						清除屏幕 clear screen
+						清除缓冲 clear buffer
+				d8.get加载文件到缓冲
+						get 文件
+						
+				d9.直接执行文件中的sql语句
+						start  文件
+						或者
+						@  文件
+				d10.追加数据到缓冲的当前行
+							append
+				d11.删除缓冲行
+							del		行号
+							
+				d12.spool自动存储操作语句与语句输出
+						spool 文件名
+							操作
+						spool off
+				d13.connect 重新连接
+						connect 用户/口令@远程服务名
+		connect 用户/口令@远程服务名 as 数据库角色
+					数据库角色
+						sysdba
+						sysoper
+						normal（不需要as默认就是normal）
+				d14.disconnect断开连接
+						
+				d15.shutdown关闭数据库 	
+				d16.--注释
+				d17.show all
+						显示所有变量
+						show 变量名
+						显示某个变量
+				d18.set 变量 状态
+						设置变量的值。						
+	7.数据库字段的类型
+			数据类型：
+					外部数据类型
+							short
+							integer
+							bool
+							long
+							float
+							double
+							
+							varchar2
+							char
+							
+							date
+							time 
+							
+							clob
+							blob							
+							
+					内部数据类型
+							number(长度,小数位数)
+							char(长度)
+							varchar2(长度)  ‘’表示字符串
+							datetime 				''表示日期
+							lob
+			
+			
+二.数据库查询
+		1.查询语句
+				1.1.查询的结果
+						a.选择记录   select
+						b.选择字段		 project
+				1.2.语法
+						结构查询语言：关键字表示一个结构
+			a.字段选择【查询什么】
+			select 【distinct】  字段名1[ [as] 别名],字段名2 as 别名,...	
+					a1.选择字段
+					a2.选择字段并且命名别名
+					a3.选择所有字段
+					a4.选择字面值
+					a5.选择一个函数的结果
+					a6.选择字段与字面值的表达式
+			注意:
+					剔除重复行，使用distinct的关键
+			
+			特殊函数
+					nvl(字段名,缺省值)
+					当字段为NULL，返回缺省值
+					否则返回字段的实际值.
+					
+					
+	补充：
+				|| 字符串连接符号
+				表达式支持的运算符号	||  + - * /
+							
+			
+			b.表选择【从哪里查询】
+			from  表名1 别名, 表名2 别名，....
+					b1.表名别名
+					b2.在select中可以使用别名
+							别名.字段  
+							别名.*
+					b3.哑表
+							dual		
+			注意：
+					1.别名主要解决字段歧义。
+					2.select *,字段非法。
+								
+			c.记录选择[查询过滤]			
+			where 过滤条件
+select ... from  ... where 条件;
+			条件分成：
+					c1.关系条件
+							> >= < <= = !=
+							
+							!=  <>  ^=  不等
+							
+					c2.测试条件
+							between ...  and     
+									[] 闭区间
+									两个数据有顺序的
+							in (值列表)
+									
+							like  值    (字符串)
+									支持通配符号%  任意字符
+															_  一个字符
+									提示：使用like支持模糊查询。
+															
+	问题：
+				如果字符本身是%怎么办？
+						可以使用转义符号.
+						默认转义符号是\
+						使用escape 定义转义符号.
+				
+																						
+							is null    是否为空
+							
+							
+		表达式构成：
+					字面值
+					字段
+					函数
+										
+				c3.条件运算
+						and 
+						or 
+						not
+					not使用的位置
+						not  关系;
+						比如:
+								not salary <3000;
+								not id in(1,2,3,4)
+								
+					not 字段表达式 between ... and ...
+					not 字段表达式 in (.....)
+					not 字段表达式 is null
+					not 字段表达式 like
+					not的特殊使用
+					字段表达式 not between ... and ...
+					字段表达式	 not in (.....)
+					字段表达式	 not is null
+					字段表达式	 not like
+									
+			注意：
+					在where的字段中使用表的别名与字段别名
+							字段别名只做显示，不允许使用在
+							where order by等从句中。
+					
+							 在where可以使用表的别名区分不同表的字段。
+					
+		注意:
+				select与from是必须	的
+			
+			d.查询结果排序
+			order by 排序字段1 排序类型，
+							 排序字段2 排序类型,....
+		注意：
+				order by永远排在最后。不能在中间。
+			
+			排序分类：
+					升序:asc   默认
+					降序:desc	
+			
+			order by可以使用别名排序
+			
+						
+			e.查询结果分组			
+			group by 分组字段1,分组字段2,...
+			有分组的查询，其中select字段有条件要求：
+					要么在分组字段中，
+					要么在聚合函数中使用
+			Oracle的函数分类：
+					单行函数
+					聚合函数
+				e1.聚合函数
+					count(字段);	count(*); 个数
+					sum(字段)，累加字段和
+					avg(字段)，平均数
+					max(字段),最大
+					min(字段),最小
+				
+				聚合函数什么时候在分组中使用。
+				聚合函数什么时候不在分组中使用。
+					
+					null字段	对聚合函数的影响。（null不参与过程）
+			
+			f.分组过滤
+			having  过滤条件
+			
+			
+			
+		e2.单行函数	
+			
+		2.关联查询
+		3.子查询
+		4.函数
+		5.高级查询语句
+		
+三.DDL语句
+
+
+四.DML与事务
+
+
+五.数据库对象
+	视图，索引，序列
+	
+六.简单DBA基础与数据库优化基本原则
+
+
+
+
+
+作业：
+		1.把笔记中每个语句的只是知识点都补充至少一个例子。
+		
+			

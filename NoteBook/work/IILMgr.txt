@@ -1,0 +1,39 @@
+Task :
+	test the ill
+   	1. add entry to the ill 
+
+
+	
+// code
+
+	// 1. random illname
+	map<OmnString, u64> illMap;
+	for (u32 i=0; i<10000; i++)
+	{
+		u32 length = random()%5 + 5;
+		OmnString tmpIILName = getRandomStr(length);
+		u64 tmpIILId = AosIILMgr::getSelf()->getIILID(tmpIILName, true, mRundata);
+		aos_assert_r(tmpIILId > 0, false);
+		illMap.insert(std::pair<OmnString, u64>(tmpIILName, tmpIILId));
+	}
+	
+	// 2. append entry to ill
+	map<OmnString, u64>::iterator itr = illMap.begin();
+	for (u32 j=0; j<10000000; j++)
+	{
+OmnScreen << "for loop : " << j << endl;
+		u32 pos = random()%illMap.size();
+		itr = illMap.begin(); 
+		for (u32 z=0; z<pos; z++) itr++;
+		OmnString tmpIILName = itr->first;
+		u64 tmpIILId = itr->second;
+		AosIILPtr iil = getIIL(tmpIILName, tmpIILId);	
+		aos_assert_r(iil, false);
+		bool rslt = addEntries(iil);
+		aos_assert_r(rslt, false);
+
+		## when we uesd, we should return back the ill
+		AosIILMgr::getSelf()->returnIILPublic(iil, mRundata);
+	}
+
+

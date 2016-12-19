@@ -1,0 +1,780 @@
+一.数据库基础 
+	1.背景
+		数据库就是Unix系统中多个文件(数据文件)
+		PC数据库：access，foxpro，dbase(数据库文件+管理系统)
+		数据库服务器：Informix,DB2,Oracle,SQLServer							,MySql,....	（数据库文件+管理工具+远程网络服务）
+	2.数据库工作的基础
+		数据库是相关联的数据。
+				集合:表(TBALE)+记录	
+				表：若干字段构成的数据记录
+				表：table,字段:field，记录:record
+				
+				关系：表与表的关联
+							有意义的关系.
+							
+							最平凡的关联关系：笛卡尔关联
+							
+				数据库基本原理：
+						关系数据库
+				结果：
+						任何表都是通过关系关联，用户可以从任何一个字段开始，找到数据库中需要的任何数据。					
+							
+	3.学习SQL的关键：
+			描述表
+			描述表的关系		E-R图
+			
+			添加删除修改查询记录
+			
+	4.数据库：
+			数据文件+管理系统+数据库访问API			
+			DBFile+DBMS=数据库服务器
+				|
+			 表---|
+						|-字段
+						|-记录
+	5.DBMS:
+			|-数据库文件的操作
+			|-用户操作UI
+			|-远程网络服务
+			|-数据库专门语言的翻译与解释
+								|-SQL（Struct Query Language）
+										|-DDL(Data Defining Language)
+										|-DML(Data Manipulate Language)
+										|-DQL(Data Query Language)
+			用户->SQL语句->客户工具->数据驱动->DBMS->数据库文件
+			
+			程序员->SQL语句->数据驱动->DBMS->数据库文件
+	6.sqlplus工具的使用
+			a.
+			输入sqlplus程序指令
+			输入用户，再输入口令登录成功
+			输入quit退出sqlplus
+			b.
+			sqlplus 用户/口令	
+			c.
+			sqlplus 用户/口令@服务名
+			d.
+			sqlplus /nolog 
+			直接启动sqlplus 但不登录。
+			
+			判定某个Oralce服务名是否配置存在
+			tnsping Oralce服务名
+			远程数据库工具必须配置：监听器+网络服务名
+			
+			本机使用不需要配置：默认安装，默认数据库SID
+			
+			d.SQLPLUS的指令：
+					SQLPLUS内置指令+SQL语句
+					每条指令结束加分号;
+				试验1:
+					使用内置指令							
+							help index    //显示所有的指令
+							help clear		//显示某个指令
+							clear screen
+							cl scr
+							显示表的定义：
+							desc 表名;
+							
+					使用SQL语句	
+							显示数据库中有多少表
+select table_name from user_tables;
+							
+				注意：SQL语句不加分号，表示语句没有输入完毕，显示二级输入提示符号，等待用户输入完整。
+				
+				d1.host 执行系统指令
+					在windows下可以使用!替换	
+				d2.list 显示缓冲中SQL语句
+								并且设置为当前行
+						有*显示的就是当前行		
+								
+				d3.change 改变缓冲的当前行		
+						c /被修改字符/修改后的字符				
+				
+				
+				d4.执行缓冲中的语句
+						r[un] 	
+						/
+			
+				d5.edit指令
+						启动默认编辑器编辑缓冲
+						一般情况默认编辑器是vi
+				d6.save保存缓冲
+						save 文件名
+				
+				d7.clear
+						清除屏幕 clear screen
+						清除缓冲 clear buffer
+				d8.get加载文件到缓冲
+						get 文件
+						
+				d9.直接执行文件中的sql语句
+						start  文件
+						或者
+						@  文件
+				d10.追加数据到缓冲的当前行
+							append
+				d11.删除缓冲行
+							del		行号
+							
+				d12.spool自动存储操作语句与语句输出
+						spool 文件名
+							操作
+						spool off
+				d13.connect 重新连接
+						connect 用户/口令@远程服务名
+		connect 用户/口令@远程服务名 as 数据库角色
+					数据库角色
+						sysdba
+						sysoper
+						normal（不需要as默认就是normal）
+				d14.disconnect断开连接
+						
+				d15.shutdown关闭数据库 	
+				d16.--注释
+				d17.show all
+						显示所有变量
+						show 变量名
+						显示某个变量
+				d18.set 变量 状态
+						设置变量的值。						
+	7.数据库字段的类型
+			数据类型：
+					外部数据类型
+							short
+							integer
+							bool
+							long
+							float
+							double
+							
+							varchar2
+							char
+							
+							date
+							time 
+							
+							clob
+							blob							
+							
+					内部数据类型
+							number(长度,小数位数)
+							char(长度)
+							varchar2(长度)  ‘’表示字符串
+							datetime 				''表示日期
+							lob
+			
+			
+二.数据库查询
+		1.查询语句
+				1.1.查询的结果
+						a.选择记录   select
+						b.选择字段		 project
+				1.2.语法
+						结构查询语言：关键字表示一个结构
+			a.字段选择【查询什么】
+			select 【distinct】  字段名1[ [as] 别名],字段名2 as 别名,...	
+					a1.选择字段
+					a2.选择字段并且命名别名
+					a3.选择所有字段
+					a4.选择字面值
+					a5.选择一个函数的结果
+					a6.选择字段与字面值的表达式
+			注意:
+					剔除重复行，使用distinct的关键
+			
+			特殊函数
+					nvl(字段名,缺省值)
+					当字段为NULL，返回缺省值
+					否则返回字段的实际值.
+					
+					
+	补充：
+				|| 字符串连接符号
+				表达式支持的运算符号	||  + - * /
+							
+			
+			b.表选择【从哪里查询】
+			from  表名1 别名, 表名2 别名，....
+					b1.表名别名
+					b2.在select中可以使用别名
+							别名.字段  
+							别名.*
+					b3.哑表
+							dual		
+			注意：
+					1.别名主要解决字段歧义。
+					2.select *,字段非法。
+								
+			c.记录选择[查询过滤]			
+			where 过滤条件
+select ... from  ... where 条件;
+			条件分成：
+					c1.关系条件
+							> >= < <= = !=
+							
+							!=  <>  ^=  不等
+							
+					c2.测试条件
+							between ...  and     
+									[] 闭区间
+									两个数据有顺序的
+							in (值列表)
+									
+							like  值    (字符串)
+									支持通配符号%  任意字符
+															_  一个字符
+									提示：使用like支持模糊查询。
+															
+	问题：
+				如果字符本身是%怎么办？
+						可以使用转义符号.
+						默认转义符号是\
+						使用escape 定义转义符号.
+				
+																						
+							is null    是否为空
+							
+							
+		表达式构成：
+					字面值
+					字段
+					函数
+										
+				c3.条件运算
+						and 
+						or 
+						not
+					not使用的位置
+						not  关系;
+						比如:
+								not salary <3000;
+								not id in(1,2,3,4)
+								
+					not 字段表达式 between ... and ...
+					not 字段表达式 in (.....)
+					not 字段表达式 is null
+					not 字段表达式 like
+					not的特殊使用
+					字段表达式 not between ... and ...
+					字段表达式	 not in (.....)
+					字段表达式	 not is null
+					字段表达式	 not like
+									
+			注意：
+					在where的字段中使用表的别名与字段别名
+							字段别名只做显示，不允许使用在
+							where order by等从句中。
+					
+							 在where可以使用表的别名区分不同表的字段。
+					
+		注意:
+				select与from是必须	的
+			
+			d.查询结果排序
+			order by 排序字段1 排序类型，
+							 排序字段2 排序类型,....
+		注意：
+				order by永远排在最后。不能在中间。
+			
+			排序分类：
+					升序:asc   默认
+					降序:desc	
+			
+			order by可以使用别名排序
+			
+						
+			e.查询结果分组			
+			group by 分组字段1,分组字段2,...
+			有分组的查询，其中select字段有条件要求：
+					要么在分组字段中，
+					要么在聚合函数中使用
+			Oracle的函数分类：
+					单行函数
+					聚合函数
+				e1.聚合函数
+					count(字段);	count(*); 个数
+					sum(字段)，累加字段和
+					avg(字段)，平均数
+					max(字段),最大
+					min(字段),最小
+				
+				聚合函数什么时候在分组中使用。
+				聚合函数什么时候不在分组中使用。
+					
+					null字段	对聚合函数的影响。（null不参与过程）
+//////////////////////////////////////////////
+select ... from ... 
+where ...  
+group by ...
+having ...
+order by ...
+ 
+/////////////////////////////////////////////	
+			f.分组过滤
+			having  过滤条件
+			使用与where一样。
+			但有两个区别：
+				f1.	where只能使用select中普通字段或者非select字段
+						having使用select中或者非select中分组字段与聚合函数表达式。
+				f2.	where分组前过滤
+						having是分组后过滤（对分组结果过滤）
+					
+					
+		e2.单行函数	
+掌握函数的作用。
+掌握函数在select中使用
+掌握函数在where,group,having,order中使用
+			e.1.字符函数
+					lower   转小写
+					upper		转大写
+					initcap 把每个单词的首字母转大写
+								会不会把非首字母转换为小写？
+					concat	等于||字符串连接符号
+							字符串与字符串
+							字符串与数字
+							数字与数字
+					substr 取子串
+							substr(字符串,开始,长度)
+							开始位置从1开始
+					length
+							取字符串的长度
+			
+所有的数据类型在字符串函数中自动转换为字符			
+					to_char
+						把数字转换成字符
+								9 表示数字
+								0 表示数字（强制显示）
+								$ 显示$符号
+								L 显示本地货币符号
+								. 小数点
+								, 财务分割符号
+						把日期转换	成字符
+								to_char
+				e.2.数字函数
+						round 四舍五入
+						trunc	丢弃
+						to_number 把字符转换为数字			
+						格式与to_char一样。
+						mod 求余			
+				e.3.日期函数
+						to_char
+						to_date
+						
+						日期运算函数: 
+								日期+数字  单位天
+									比如sysdate+1/24 加一个小时
+								日期-数字
+									
+								AddMonths 单位月
+										addmonths(日期,月数);
+								next_day  单位周
+								last_day	取得当月的最后一天	
+											
+								round
+								trunc								
+								between_months
+				e4.数学函数
+						power
+						sqrt
+						abs
+						log
+						sin
+						cos
+						tan
+						ceil
+						floor
+								
+		2.关联查询
+			2.1.关联的种类
+					a.笛卡尔关联(无意义关联)
+							无条件
+					b.内关联
+							where 条件
+									|-- = 关联
+											|-- 自关联
+											|-- 异表关联
+											 
+									|-- 非等号关联
+											
+									
+					c.外关联
+							where 条件
+							全关联
+								where ?  
+							左关联 
+								where 表1.字段(+)=表2.字段
+							右关联
+								where 表1.字段=表2.字段(+)
+							
+					关联
+	select * from 表 [...]	join 表 on(关联条件)
+		inner join
+		outer join
+			full [outer] join
+			left [outer] join 
+			right [outer] join
+					
+		3.子查询
+	有的子查询的效果与前面的关联查询的效果一样。
+			3.1.什么是子查询
+				连续查询：在已知查询结果上进行多次查询
+						称已知的查询为子查询。
+						也称为嵌套查询。
+				执行顺序：
+						子查询先(不是最后结束)执行。		
+			3.2.什么地方需要子查询
+select.from.where.group by.having.order by.
+			可以在select从句的任何地方嵌入子查询
+			注意：
+					某些时候子查询的结果必须是单行。
+					
+			a.在select嵌入子查询
+			b.在from中使用子查询
+			c.在where中使用子查询
+			
+			d.子查询分多行子查询与单行子查询。
+		4.函数
+				字符函数
+				数字函数
+				日期函数
+				
+				系统函数
+				数学函数
+				统计函数
+		5.高级查询语句
+				union
+				
+		
+三.DDL语句
+		1.建表
+			1.1.语法
+			create table 表名
+			(
+				字段定义,
+				字段定义，
+				.....,
+				字段定义,
+				字段的表约束,
+				字段的表约束,
+				....
+				字段的表约束	)	
+			1.2.字段定义的语法
+			字段名 字段类型[ 缺省值 字段的字段约束],
+				
+		有的约束可以在字段定义，也可以在表中定义
+		但有的只能在表中		
+				
+				1.2.1.字段名
+						符号C语言命名规则（不要超过30）
+							$ _ # 
+							
+				1.2.2.字段类型
+						内部类型
+								varchar2
+								char
+								date
+								number
+								lob
+						外部类型
+								varchar2
+								char
+								date
+								
+								integer
+								float
+								double								
+								
+								clob
+								blob
+				metadata[元数据表]
+	补充：约束语法：
+			字段级约束
+			【constraint 约束名 】约束类型,
+			表级约束
+			constraint 约束名 约束类型（被约束字段）		
+				1.2.3.缺省值
+						default 缺省值
+				1.2.4.主键约束
+						a.什么是主键
+								标识记录唯一型的字段
+								其他字段依赖注主键
+								PRIMARY KEY	
+						b.字段级别约束						
+						c.表级约束						
+						d. 注意						
+	primary key对字段级约束只能一个字段有该约束。
+						 对表级约束可以多个字段是主键。
+						 		
+				1.2.5.外键约束
+					a.字段级约束
+constraint 约束名 references  关联表(关联字段)	
+					b.表级约束
+constraint 约束名 foreign key 外键字段 references 关联表(关联字段) 					
+					c.可选的级联约束
+						on delete cascade 
+									父表的数据删除导致子表的数据直接删除 
+						on delete set null
+									父表的数据删除导致字表的外键置空。
+					
+					
+							
+				1.2.6.NOT NULL约束
+						只能是字段级别约束，不能是表级约束
+						[constraint 约束名] not null,
+						
+				1.2.7.唯一约束
+						a.字段级别约束
+						constraint 约束名 unique，
+						b.表级约束	
+						constraint 约束名 unique(字段名,字段名)
+				1.2.8.值检测约束
+						注意：在check可以使用函数。
+						a.字段级约束
+						
+						b.表级约束
+create table louis_csd1102
+(
+	id integer not null primary key,
+	name varchar2(20) check(length(name)<=10),
+	age integer check(age<=100)
+)
+
+create table louis_csd1102
+(
+	id integer not null primary key,
+	name varchar2(20) ,
+	age integer,
+	constraint ck_louis_csd1102 check(age<=100)
+)
+			1.3.使用已知表的子查询建立临时表
+			create table 表名 as select	查询;						注意：
+						有些约束条件会丢失.
+					强烈建议不是使用这种方式建表。
+						
+								
+		2.删除表
+			drop table 表名;
+		3.修改表
+			
+								
+			
+四.DML与事务
+			1.insert into语句
+			
+	insert into 表 【(字段1,.)】 values(值1,.)
+	insert into 表 (字段) select 从句
+	
+			
+			2.update
+	update 表名 set 字段=值，字段=值	，....	
+				where 条件
+			
+			注意：
+					值: 表达式
+							函数，字面值，字段运算而成。		
+			3.delete
+				delete from 表;
+						删除表中所有记录
+				delete from 表 where 条件;
+						删除表中满足条件记录
+						
+			4.事务提交
+				commit;
+				rollback;
+				4.1.事务对DDL，DCL自动提交。
+					DQL没有事务
+				SQLPLUS正常退出自动提交事务。	
+				只对DML进行事务处理。
+				4.2.事务对数据影响
+						
+				4.3.事务控制点。
+						控制点定义
+						savepoint 控制点名;
+						
+						回滚到指定控制点
+						rollback to 控制点;
+						
+					
+五.数据库对象
+	表是最常用的数据库对象。
+	
+	1.序列
+		背景：
+				自增长整数的时候可以使用序列。
+		定义序列：
+			create sequence 序列名 递增量 初始值 最大值  最小值 是否循环  是否缓冲
+			
+			increment by  n
+			start with n
+			maxvalue n | nomaxvalue
+			minvalue n | nominvalue
+			cycle | nocycle
+			cache n | nocache
+			
+			
+			alert sequence 序列名
+			increment by  n
+			start with n
+			maxvalue n | nomaxvalue
+			minvalue n | nominvalue
+			cycle | nocycle
+			cache n | nocache
+			
+			删除序列
+				drop sequence 序列名;
+			
+			查看用户创建序列：
+	select sequence_name from user_sequences;
+			总结：用户的元数据表.
+			
+					user_tables;
+					user_constraints;
+					user_sequences;
+					user_indexes;
+					user_views;
+					user_ind_columns;
+										
+			
+		使用序列：
+				序列对象有两个成员。
+						nextval 修改序列最后一个数
+						currval  得到序列数
+				注意：
+						第一次调用必须调用nextval把序列初始值初始化为开始值。		
+		
+		序列的注意：
+				整数
+				每个整数可以任何表使用
+				自动增加，而且唯一
+				序列专门用来维护某些自增长字段（主键）。		
+				
+				序列不受事务回滚影响。
+				
+				
+	2.索引
+			2.1.分类
+					自动索引
+							|-主键与唯一约束自动生成索引
+					手工索引
+			2.2.索引背景
+					提高查询速度。
+			2.3.使用索引的条件
+			2.4.创建索引
+					create index	索引名  
+							on 表名(字段1,...,字段n)
+			2.5.删除索引
+					drop index 索引名;
+					
+							
+											
+	3.视图
+			3.1.视图就是一个逻辑查询。
+					视图的主体就是select查询。结构也是表的形式。
+			3.2.视图的查询结果表物理不存在。
+					而且随原来的表改变而动态改变的。
+					
+					视图不是临时表。
+					
+					
+			3.3.创建视图
+					create view 视图名 别名
+					as  select语句（视图的主体）；
+							
+查询不是领导的员工？
+									
+			3.4.使用视图：
+					与表的使用一样。
+					
+					视图就是查询语句的别名。
+						
+数据库对象
+		create [ or replace	] 数据库对象类型 数据库对象名 定义；
+		
+		create or replace table 	stu
+		(
+		)
+		
+		create or replace sequence se_louis
+		....
+		;
+		
+		create or replace index ind_louis on stu();
+		
+		create or replace view v_louis as ...;
+		
+					3.5.原则上不允许通过视图修改删除数据
+							
+							但SQL语法上可以通过视图修改数据。
+							但条件是：视图必须是简单视图。
+							
+							简单视图指：
+										单表查询，
+										查询没有使用函数
+										不使用分组
+		
+					3.6.删除视图
+								drop view 视图名;
+								
+								
+六.高级主体：
+		1.rownum
+				伪列：记录的物理行号
+				注意：
+					在where中使用rownum只能使用< <=
+				
+		2.rowid
+				记录行的唯一ID。
+		3.union/union all
+			intersec;
+			minus
+							
+		4.exists
+			not exists;
+
+
+重点：
+			1.DDL建立表
+					能定义使用序列
+			
+			2.DML增删修
+			
+			3.查询
+			
+			4.创建并且使用视图。
+			
+作业:
+		整理笔记，
+		每个语句举一个例子加入笔记。
+
+文档：
+		1.优化原则。
+		2.简单DBA管理（关于性能与优化）。
+		
+作业：
+		1.把笔记中每个语句的只是知识点都补充至少一个例子。
+
+
+课堂作业：
+		把192.168.0.26/var/adm/wtmpx这个文件内容
+		读取出来，发送给另外一个计算机存储成文件。
+		
+		如果多个计算机读取发送到同一计算机存储。
+		
+		提示：
+				1.接收多个计算机数据并且存储的任务采用
+				select模型。
+				2.接收多个计算机数据并且存储的任务采用
+				多线程模型。
+				
+				3.接收方同时写文件怎么加锁？
+				
+				4.接收方加锁写文件时间比较长，怎样防止socket接收缓冲溢出？
+								
+				
+		
+		
+		
+		
+		
+				
+			

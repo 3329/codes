@@ -1,0 +1,5 @@
+mount /dev/cdrom /media
+find /media -name 'pam-devel*'
+rpm -ivh pam... --test
+rpm -ivh pam...
+unmount /dev/cdrom

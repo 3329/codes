@@ -1,0 +1,113 @@
+    30	10:12	cd SEServer
+    31	10:13	vi SeReqProc.cpp
+    32	10:13	pwd
+    33	10:13	vi SeReqProc.cpp
+    34	10:15	ext
+    35	10:15	cd DataService/
+    36	10:15	vi AosDataService.js
+    37	10:17	src
+    38	10:17	cd SeReqProc
+    39	10:17	fg
+    40	10:18	src
+    41	10:18	cd SeReqProc
+    42	10:18	vi RunSmartdoc.cpp
+    43	10:20	cd ..
+    44	10:20	cd SEInterfaces/
+    45	10:20	ls
+    46	10:20	vi UserMgmtObj.cpp
+    47	10:20	vi UserMgmtObj.h
+    48	10:21	cd ..
+    49	10:21	cd UserMgmt/
+    50	10:21	ls
+    51	10:21	vi UserMgmt.h
+    52	10:21	src
+    53	10:21	cd SEInterfaces/
+    54	10:22	vi SmartDocObj.h
+    55	10:22	vi SmartDocObj.cpp
+    56	10:22	ses
+    57	10:22	vi main.cpp
+    58	10:23	src
+    59	10:23	cd SmartDoc
+    60	10:23	ls
+    61	10:23	vi ../SEServer/Local/main.cpp
+    62	10:23	ls
+    63	10:23	ls
+    64	10:23	vi SdocNames.h
+    65	10:24	vi ../SEServer/Local/main.cpp
+    66	10:24	vi SmartDoc.h
+    67	10:24	vi ../SEInterfaces/SmartDocObj.cpp
+    68	10:24	vi SmartDoc.cpp
+    69	10:32	src
+    70	10:32	cd Actions
+    71	10:32	ls
+    72	10:32	vi ActCreateFile.cpp
+    73	10:34	vi ../SmartDoc/SmartDoc.cpp
+    74	10:35	vi ActCreateFile.cpp
+    75	10:35	vi ActCreateFile.h
+    76	10:35	vi ../SmartDoc/SmartDoc.cpp
+    77	10:36	vi ActCreateFile.cpp
+    78	10:36	vi ../SmartDoc/SmartDoc.cpp
+    79	10:36	vi ../SmartDoc/SmartDoc.h
+    80	10:36	vi ../SmartDoc/SmartDoc.cpp
+    81	10:38	ls
+    82	10:39	vi ../SmartDoc/SdocVote.cpp
+    83	10:39	vi ../SmartDoc/SdocVote.h
+    84	10:39	vi ../SmartDoc/SdocVote.cpp
+    85	10:39	vi ActCreateFile.cpp
+    86	10:40	vi ActCreateFile.h
+    87	10:42	vi ActCreateFile.cpp
+    88	10:44	vi ActCreateFile.h
+    89	10:44	vi ActCreateFile.cpp
+    90	10:45	vi ActCreateFile.h
+    91	10:47	vi ActCreateFile.h
+    92	10:50	vi ActCreateFile.cpp
+    93	10:50	c
+    94	10:50	make
+    95	10:51	vi ../Util/Ptrs.h
+    96	10:51	vi ../Util/DirDesc.h
+    97	10:51	vi ../Util/FileObj.h
+    98	10:51	vi ../Util/FileObj.h
+    99	10:52	vi ../Util/Ptrs.h
+   100	10:52	vi ActCreateFile.cpp
+   101	10:52	vi ActCreateFile.h
+   102	10:52	vi ActCreateFile.cpp
+   103	10:53	c
+   104	10:53	make
+   105	10:53	vi ../Util/Ptrs.h
+   106	10:53	c
+   107	10:53	make
+   108	10:53	vi ActCreateFile.cpp
+   109	10:55	c
+   110	10:55	make
+   111	10:55	vi ActCreateFile.cpp
+   112	10:56	vi ActCreateFile.h
+   113	10:56	vi ActCreateFile.cpp
+   114	10:59	vi ActCreateFile.cpp
+   115	10:59	vi ../Util/File.cpp
+   116	10:59	vi ActCreateFile.cpp
+   117	11:00	vi ../Util/File.cpp
+   118	11:00	man seek
+   119	11:00	vi ../Util/File.cpp
+   120	11:02	vi ActCreateFile.cpp
+   121	11:03	vi ActCreateFile.h
+   122	11:03	vi ActCreateFile.cpp
+   123	11:05	vi ../Util/File.h
+   124	11:05	vi ActCreateFile.cpp
+   125	11:14	make
+   126	11:16	make
+   127	11:16	make clean ; make -j8
+   128	11:18	ls
+   129	11:18	history > ~/NoteBook/runSmartDoc.note
+
+
+
+                                                                   
+flows:                                                            
+   1. Run smart doc                                                  
+	   a. XML                                                         
+	   b. Smartdoc Objid                                              
+	   c. reqid="sdoc_run"                                            
+   2. AosSmartDocObj::procSmartdocsStatic(sdoc_objid, rdata);        
+   3. AosActCreateFiles::run(def, rdata);                            
+
+

@@ -1,0 +1,29 @@
+How to use ssh
+
+1. client 
+	ssh-keygen -t rsa
+	生成公钥 id_rsa.pub
+	scp /home/user/id_rsa.pub young@192.168.99.85:~ 
+2. server
+	young
+		cat id_rsa.pub >> .ssh/authorized_keys
+		chmod 700 .ssh
+		chmod 600 .ssh/authorized_keys
+
+scp 
+	-r : copy dir
+	-p : 保持文件原有属性
+	-P : 指定端口
+
+每周日做一次完全备份
+	crontab -e
+		0 2 * * /usr/bin/scp -rp young@192.168.99.85:~/webSite /backup/webSite-($date + %F)
+周一到周六做一次增量备份
+	crontab -e
+		0 2 * * 1-6 /usr/bin/rsync -arHz --delete -e ssh young@192.168.99.85:~/webSite /backup
+
+
+	
+// Just like this
+1. ssh-keygen -t rsa
+2. ssh-copy-id -i ~/.ssh/id_rsa.pub young@192.168.99.85

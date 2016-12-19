@@ -1,0 +1,11 @@
+Create an Action
+	1.cp 一个Action.h 和.cpp 文件
+	2.修改类名  AOS/src/Actions/AllActions.cpp 中new 一个静态变量(记住引入相应的头文件)
+	3.在 ~/AOS/src/SEInterfaces/ActionType.h 定义Action name 
+	4.具体实现的逻辑写在run 方法zhong
+
+ActCmd.cpp::run
+	1.检测config 是否存在 不存在 ERROR
+	2.get server ids frome attribute machines
+	3.loop all machines to run this command
+	4.将log 返回给前台

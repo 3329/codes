@@ -1,0 +1,15 @@
+
+5.函数
+	a.__cdecl __fastcall __stdcall的区别
+	b.说明下面语句的含义
+		void *(*run) (void *)
+6.变量
+	a.说明如下修饰符号的作用
+		auto register restrict explicit mutable
+		const static volatile的作用
+	b.下面两个语句分配的内存地址相差多少？
+		int *p1=new int(20);
+		int *p2=new int(20);
+		p2-p1=?
+7.C++
+	简单描述什么是面向对象的多态。并说明多态的好处

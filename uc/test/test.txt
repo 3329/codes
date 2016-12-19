@@ -1,0 +1,60 @@
+
+1.数组与指针
+	a.如下语法为什么是错误的？
+		char a[20];
+		a="hello";//为什么语法错误？
+		a++;//为什么语法错误？
+	b.指针的哪些语法对数组是不适用的？为什么？
+	c.下面语句有什么作用？
+		char arr[20];
+		int* p =new(arr) int(20); 
+
+2.C++与C的区别
+	a.下面代码请使用g++与gcc分别编译，然后执行并观察结果
+		/*filename const.c*/
+		#include <stdio.h>
+		main()
+		{
+			const int a=20;
+			int* p=(int*)&a;
+			*p=30;
+			printf("%d\n",a);
+		}
+		gcc const.c -o main
+		g++ const.c -o main
+	b.请确认下面语法在C于C++会产生什么差异？
+		#include <string.h>
+		main()
+		{
+			int*p =malloc(4);
+			free(p);
+		}
+	c.extern "C" 的作用是什么？extern还有其他作用吗？
+3.结构体：
+	a.有如下结构体的定义方式
+		struct st1
+		{
+			int a;
+			char b;
+			int c;
+		};
+		typedef struct
+		{
+			int a;
+			char b;
+			int c;
+		}st2;
+		请分别使用上面两个结构体定义对象
+	b.请确认上面结构体的sizeof是多少？
+4.标准C库
+	a.请打印当前的年月日时分秒格式采用yyyy-MM-dd HH:mm:ss
+		其中年占4位，其他的必须两位，一位的使用0补充占位
+	b.请保存如下两条记录到文件
+		"tom" 20 'f'
+		"rose" 18 'm'
+	c.请把上面的数据读取出来保存成文本文件
+	d.写一个程序，使用方法如下：add 4 8
+		程序打印和，比如上面结果就是12.
+		如果参数不足，就提示错误。
+	e.写出常见标准C库的头文件
+	

@@ -1,0 +1,41 @@
+1. dev.zykie.com
+2. Node.js -- About Node.js
+	http://www.ibm.com/developerworks/cn/opensource/os-nodejs/
+3. HashTable
+	http://blog.csdn.net/feixiaoxing/article/details/6885657
+4. Makefile
+	http://blog.csdn.net/haoel/article/details/2886
+5. Algorithms
+	http://www.luocong.com/dsaanotes/index-Z-H-3.htm
+	http://blog.csdn.net/feixiaoxing/article/details/6845132
+	http://www.cppblog.com/shongbee2/archive/2009/04/29/81483.html
+	http://blog.csdn.net/acb0y/article/details/6553051
+6. 
+	http://os.51cto.com/art/200709/55562.htm
+
+7. dir or file 
+	http://blog.csdn.net/zhuyi2654715/article/details/7605051
+
+8. runjs
+	http://runjs.cn/apidoc/files/js_editor.js.html#l56
+
+9. cpp zip/unzip files
+	http://www.cnblogs.com/jianc/archive/2013/03/13/2957974.html
+
+10. man 
+	http://man.chinaunix.net/
+
+11.bit map
+	http://blog.csdn.net/hit_kongquan/article/details/6255673
+	http://blog.csdn.net/hguisu/article/details/7880288
+
+12. data struct & Algothrs
+	http://blog.csdn.net/feixiaoxing/article/category/878822
+
+13. Node.js
+	http://www.nodebeginner.org/index-zh-cn.html
+14. c function
+	http://man.chinaunix.net/develop/c&c++/linux_c/default.htm
+15. cpp List
+	http://people.sc.fsu.edu/~jburkardt/cpp_src/cpp_src.html
+15. datastruct

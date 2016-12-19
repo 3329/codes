@@ -1,0 +1,57 @@
+##############################################################
+# This note is about the dynmaic jimo
+#
+#	the jimo_doc format just like this.
+#		<jimo 	zky_libname="libJimoDataRecord.so"
+#				zky_objid="test"
+#				"zky_classname=\"AosJimoRecordFixBin"
+#				"current_version="1.0"/>
+#
+#
+#############################################################
+
+
+#include "DataRecord/Jimos/Tester/JimoRecordFixBinTester.h"
+#include "DataRecord/Jimos/JimoRecordFixBin.h"
+#include "DataRecord/DataRecord.h"
+#include "Jimo/Jimo.h"
+
+
+bool AosJimoRecordFixBinTester()
+{
+	// 1. worker_doc
+	worker_doc= "<record type=\"fixbin\" zky_name=\"doc\" record_len=\"20\" >"
+		"<element type=\"str\" zky_name=\"system_type\" zky_offset=\"0\" zky_length=\"2\"/>"
+		"<element type=\"str\" zky_name=\"seqno\" zky_offset=\"4\" zky_length=\"3\"/>"
+		"<element type=\"str\" zky_name=\"calling_number\" zky_offset=\"11\" zky_length=\"5\"/>"
+		"<element type=\"bool\" zky_name=\"test\" zky_value_from_field=\"calling_number\" zky_offset=\"11\" zky_length=\"5\" zky_ignore_serialize=\"true\">"
+			"<default>true</default>"
+		"</element>"
+		"</record>";
+
+	// 2. jimo_doc 
+	jimodoc = "<jimo zky_libname=\"libJimoDataRecord.so\""
+		"zky_objid=\"test\""
+		"zky_classname=\"AosJimoRecordFixBin\"" 
+		"current_version=\"1.0\">"
+		"<versions current_version=\"1.0\">"
+			"<ver_1_0 version=\"1.0\">libJimoDataRecord.so</ver_1_0>"
+		"</versions>"
+	"</jimo>";	
+		
+	// 3. create jimo
+	AosJimoPtr jimo = AosCreateJimo(rdata, worker_doc, jimo_doc);
+	aos_assert_r(jimo, false);
+
+	// 4. get jimo's type and run config 
+	AosJimoType::E jimo_type = jimo->getJimoType();
+	aos_assert_r(jimo_type == AosJimoType::eDataRecord, false);
+	AosDataRecord *data_record= dynamic_cast<AosDataRecord*>(jimo.getPtr());
+	aos_assert_r(data_record, false);
+	bool rslt = data_record->config(worker_doc, rdata);
+	aos_assert_r(rslt, false);
+
+
+	// 5. set value , get value 
+	data_record->setFieldValue(i, value, rdata);
+	data_record->getFieldValue(j, value, rdata);	

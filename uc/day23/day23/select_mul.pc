@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <sqlca.h>
+#include <stdlib.h>
+
+void opendb(char *account){
+	exec sql connect :account;
+	if(sqlca.sqlcode==-1){		
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml]=0;
+		printf("连接错误:%s\n",sqlca.sqlerrm.sqlerrmc);
+		exit(-1);
+	}
+}
+
+void closedb(){
+	exec sql commit release;
+}
+
+void querydb(){
+	char name[50][30];
+	float salary[50];
+	int i;
+	exec sql select xing,salary 
+					 into :name,salary
+					 from s_emp;
+	if(sqlca.sqlcode>=0){				 
+		/*记录行数*/	
+		for(i=0;i<sqlca.sqlerrd[2];i++){
+			printf("%s,%.2f\n",name[i],salary[i]);
+		}
+		printf("一共%d条记录!\n",sqlca.sqlerrd[2]);
+	}
+	else{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml]=0;
+		printf("查询错误:%s\n",sqlca.sqlerrm.sqlerrmc);
+	}
+
+}
+main()
+{
+	opendb("openlab/openlab");
+	querydb();
+	closedb();
+}
+
+

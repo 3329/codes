@@ -1,0 +1,219 @@
+三.IO与文件目录管理
+	8.终端IO（Curses）
+		8.1.在通常情况下，
+				格式输入输出：printf scanf 
+				二进制输入输出:write read
+				C的输入输出putchar  getchar
+				C++的输入输出istream::cin ostream::cout
+		8.2.光标可控的输入输出Curses  
+				Curses有老的版本,新的版本ncurses
+				Curses是对终端IO的封装，所以使用静态库与动态库封装
+				libcurses.a  	libcurses.so
+				libncurses.a  libncurses.so
+			头文件
+				curses.h
+				ncurses.h
+				
+			系统的库
+					/lib   /usr/lib	
+		8.3.Curses编程模型
+			a.初始化curses : initscr
+							WINDOW* initscr(void);
+							标准屏幕:stdscr
+			b.Curses输出/输入 :mvaddstr
+							int mvaddstr(int y,int x,const char*)
+							
+			c.刷屏: refresh	
+						int refresh()
+			d.释放Curses: endwin
+						int endwin();		
+							
+			返回值：
+					OK：成功
+					ERR：失败
+					
+		8.4.Curses的输出
+				a.隐藏光标
+						int curs_set(int visiblity);
+						参数0 1 2      0:隐藏光标  1：光标正常  2：光标加粗
+				b.几何线条的输出
+						border
+						wborder
+						box 
+						hline
+						vline
+				c.指定当前输出位置
+						move
+				d.字符输出
+					addch
+					waddch
+					mvaddch
+					mvwaddch
+				e.字符属性
+					e1.普通属性(预定义)
+							属性开启函数attron
+							属性关闭函数attroff
+					e2.颜色属性(用户定义)	
+							a.判定终端是否支持颜色
+									由于目前终端基本上没有不支持颜色的，所以可以不使用判定。
+									bool has_colors();
+									返回TRUE FALSE
+									
+							b.开启颜色
+									int start_color();
+							c.定义颜色对(前景色/背景色)
+						init_pair(short pair,short f,short b);
+							d.使用颜色对	
+						当成属性使用。
+						COLOR_PAIR（n）		
+				属性的使用：
+						方式1：与字符一起使用 |
+						方式2：使用attron与attroff
+				
+				颜色函数：
+						bkgd		
+			f.字符串输出
+					addstr
+					addnstr
+					
+					mvaddstr
+					mvaddnstr						
+					
+					waddstr
+					waddnstr
+					
+					mvwaddstr
+					mvwaddnstr
+			案例:
+				输出登录界面		
+				
+			g.格式输出
+				printw
+				wprintw
+				mvprintw
+				mvwprintw
+				
+				使用方法与printf完全一样。
+				
+				
+补充：
+			函数的变形：
+						hline
+						whline 在指定窗体
+						mvhline	在指定位置
+						mvwhline 在指定窗体的指定位置
+			chtype的类型
+						属性字符,4字节整数
+							1个字节表示字符
+							其他字节表示字符属性
+						表示方法：字符|字符属性
+						0：表示默认字符与默认属性
+								不同使用场合，0表示的字符及其属性不同。
+							
+									
+			如果函数不指定窗体，默认就是stdscr窗体		
+			使用宏获取屏幕高宽
+					LINES
+					COLS						
+				
+		8.5.Curses的输入
+			1.字符输入：
+				getch
+				mvgetch
+				wgetch
+				mvwgetch
+				重点在于键值的确认。
+			 案例：
+			 		体会键值的确认。	
+				
+			2.字符串输入
+				getstr
+				getnstr
+				
+				mvgetstr
+				mvgetnstr
+				
+				wgetstr
+				wgetnstr
+				
+				mvwgetstr
+				mvwgetnstr
+			案例：
+					写一个登录程序，输入用户与口令错误，继续输入，输入正确，切换到新的欢迎界面。
+						
+				
+			3.格式输入
+				scanw
+				案例：
+						加法器
+						
+			4.输入禁止回显			
+				noecho 
+			5.功能键处理
+				int keypad(bool bf)
+					KEY_LEFT
+					KEY_UP
+					KEY_RIGHT
+					KEY_DOWN
+					
+			6.清空屏幕
+				clear (推荐)
+				erase
+				
+						
+		8.6.Curses的子窗口创建
+					1.创建	
+						subwin  以屏幕坐标为坐标
+						derwin  以父窗体坐标为坐标
+		注意：
+				窗体不能与父窗体交叉。
+		
+					2.删除
+						delwin
+		案例：
+				在屏幕上不同的显示7位随机数。
+				7位随机数显示在子窗体中。
+				在不停显示随机数的同时处理键盘？
+						----多任务实现	
+										a.模拟软中断(高级异步IO)
+										b.多进程
+										c.多线程
+
+编译脚本：
+		格式：
+				注释
+					#注释内容，
+					注释单独成行，顶头。
+				基本单位：
+					目标(target)	
+					目标名:【依赖目标 依赖目标】
+					\tab目标实现指令
+						
+				指令前加@保证指令不会被输出。
+					
+		执行编译脚本
+				make
+				make -f 脚本文件  目标
+		默认脚本文件
+				makefile  
+				Makefile	
+		默认目标
+				第一个目标是默认目标
+							
+						
+
+      作业：
+			1.有资费信息：
+					资费名称：宽带
+					资费基费：包月费
+					资费费率：超时收费
+					资费说明：包月费包200小时					
+			写Curses程序，录入资费信息。
+					每录入一条，提示用户是否继续录入。
+					要求把数据保存到文件。
+					
+			2.写一个Curses程序，输入查询资费名称，
+					显示该资费所有信息。
+					
+		把上面两个程序的编译连接写成Makefile
+														

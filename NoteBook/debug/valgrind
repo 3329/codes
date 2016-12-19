@@ -1,0 +1,6 @@
+1. how to use 
+valgrind --tool=memcheck --show-reachable=yes --read-var-info=yes --verbose --time-stamp=yes --leak-check=full --log-file=log.txt ./a.out
+
+2. Find Errors
+3. Invalid
+

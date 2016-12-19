@@ -1,0 +1,69 @@
+Author: Damon
+Date:	2013/01/26	Event:	Create
+Date:	2013/01/28	Event:	Edit
+
+-----------------------------------------------
+
+cd home/m8000t/
+mkdir Nodejs
+cd Nodejs/
+scp m8000t@192.168.99.128:/home/m8000t/下载/node-v0.8.14.tar.gz ./
+	-----------------------------------------------start
+	玩命的敲密码 m8000t
+	-----------------------------------------------end
+//sudo chmod 777 node-v0.8.14.tar.gz
+sudo tar -zvxf node-v0.8.14.tar.gz
+sudo chmod -R 777 node-v0.8.14\/*
+cd node-v0.8.14
+sudo ./configure
+sudo make
+	-------------------------------------(wait a moment)
+sudo make install
+cd home/m8000t/
+vi .cshrc 或 .bshrc (如果在主目录下找不到".cshrc" 或 ".bshrc"文件，跳过此步)
+	-----------------------------------------------start
+	找到 set path = (
+		... \
+		～/xxx)
+	修改 set path = (
+		...
+		/home/m8000t/Nodejs/node-v0.8.14/tools \
+		~/xxx)
+
+	保存, 退出
+	-----------------------------------------------end
+source .cshrc 或 .bshrc
+cd /任意目录
+node -v
+	-----------------------------------------------
+	结果为 v0.8.14 (Congratuations!)
+	-----------------------------------------------
+
+cd WebSite/
+cvs login (如果已经登录就不需要了)
+cvs update
+cd NodejsServer/Config/
+vi config_connect.config
+	-----------------------------------------------start
+	找到 <pool name='seserver'>
+		<conn-address>192.168.99.105</conn-address>
+	(写目标 DB Server IP地址)
+	保存，退出，禁止向CVS提交 config_connect.config 配置文件
+	-----------------------------------------------end
+cd home/m8000t/WebSite/NodejsServer/
+node app.js
+	[出现长得像以下的内容]---------------------------start
+	2013-00-26 16:16:52:728 [INFO ] Server running at http://127.0.0.1:8088/
+	2013-00-26 16:16:52:729 [INFO ] Client Connect with html Server!
+	2013-00-26 16:16:52:729 [INFO ] Host: 127.0.0.1
+	2013-00-26 16:16:52:729 [INFO ] Port: 15523
+	2013-00-26 16:16:52:737 [INFO ] Client Connect with Server!
+	2013-00-26 16:16:52:737 [INFO ] Host: 192.168.99.105
+	2013-00-26 16:16:52:737 [INFO ] Port: 15559
+	-----------------------------------------------end
+(Congratuations! 我们的Nodejs Server已经启动.)
+(打开浏览器："http://[你自己到IP地址]:[8088]/cuteEditor.zky")
+或
+(打开浏览器："http://[你自己到IP地址]:[8088]")
+
+

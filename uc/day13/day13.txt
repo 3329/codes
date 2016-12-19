@@ -1,0 +1,196 @@
+一、socket进程通信
+	1.socket的一对一的通信模式
+		A					B
+		socket				socket
+		sockaddr				sockaddr
+		bind					connect
+		read/write				read/write
+		close					close
+	2.socket一对多的通信模式
+		在网络编程专门讲解
+		Server					Client		
+		socket					socket
+		sockaddr					sockaddr
+		bind
+		listen					
+		fd=accept					connect	
+		read/write send/recv 		sendto/recvfrom
+		close						close
+		
+	案例:
+			使用c/s模型完成进程通信	
+		
+	3.匿名socket (父子进程)
+	int socketpair(int d,int type,int protocol,int fd[2]);
+		
+		双工的描述符号关闭函数
+		int shoutdown(int s,int how)
+			how:SHUT_RD  SHUT_WR  SHUT_RDWR	
+	案例：
+			认识socket描述符号对的权限。		
+	
+二、网络基础
+		网络是socket进程通信的扩展。主要目的用于不同主机的进程之间通信。
+		1.IP地址与端口
+			IP地址识别主机:4字节整数识别主机
+			端口识别进程:2字节整数识别进程
+		2.IP地址的表示方法：
+			计算机内部采用的是网络字节序整数		
+			便于用户的记忆采用数点字符串表示
+			"一个字节.一个字节.一个字节.一个字节"
+			0-255.0-255.0-255.0-255
+			"192.168.0.26"
+		3.网络IP的地址的含义：
+				一部分表示网络ID			192.168.0.
+				另外部分表示主机ID	   	26
+		4.网络掩码
+				网络掩码与IP地址进行位运算，可以很快计算出网络ID与主机ID		
+				
+				mask:255.255.255.0	
+				ip:192.168.0.26
+				
+				net=ip & mask
+				host=ip & ~mask;
+		5.IP地址由两个部分构成：
+				网络ID			主机ID部分		
+		A	1		7			24	255.0.0.0		
+		B	2		14			6	255.255.0.0
+		C	3		21			8    255.255.255.0
+			
+		D	4		28			0	组播IP地址
+		E	5		27			0	保留IP地址
+				
+		6.网络指令
+			6.1.ping IP地址
+					ping -b 广播地址
+			6.2.ifconfig 
+					ifconfig 网络接口
+					ifconfig -a 查看所有网络接口
+			6.3.netstat
+					netstat -x      socket文件
+					netstat -u		UDP(一对一)
+					netstat -t		TCP(C/S)
+					netstat -n		以数字显示
+			6.4.lsof 查看进程打开的文件
+			6.5.arp -a
+			
+		7.IP地址与端口运算
+			7.1.IP地址转换函数
+				IP 地址的类型
+					字符串    char[]
+								
+					整数		in_addr_t  
+					结构体		struct in_addr{
+								in_addr_t  s_addr;
+							}
+						
+					函数的头文件:
+							#include <arpa/inet.h>
+							
+					int inet_aton(const char*ip,struct in_addr *addr);
+											
+					in_addr_t inet_addr(const char *ip);
+					推荐使用inet_aton
+							原因：255.255.255.255地址使用inet_aton转换，容易知道失败与成功 
+							如果使用inet_addr返回-1.				
+					==============================================================
+					in_addr_t inet_network(const char *ip)
+					这个函数建议不适用，因为返回IP地址的整数使用的主机字节序。
+					前面的函数返回的直接就是网络字节序
+					==============================================================
+											
+					char *inet_ntoa(struct in_addr addr);
+					
+					
+					in_addr_t	inet_lnaof(struct in_addr addr);
+					in_addr_t	inet_netof(struct in_addr addr);
+					struct in_addr inet_makeaddr(int net,int host)
+		7.2.端口
+					字节序：
+					字节序转换函数
+					h=host  n=net   l=long s=short
+					
+					htonl
+					htons
+					ntohl
+					ntohs
+		7.3.inet地址的表示
+					struct sockaddr_in  = sockaddr
+					{
+						family_t sin_famliy;4
+						struct in_addr sin_addr;4
+						port_t  sin_port;2
+						char  sin_pad[8];//补丁
+					}
+						
+		8.DNS（Domain Name System）与IP关系
+				bbs.tarena.com.cn    ip地址
+			
+				一般与/etc/hosts文件或者DNS有关
+				sethostent  打开/etc/hosts或者DNS
+				gethostent  读取/etc/hosts或者DNS
+				endhostent  关闭/etc/hosts或者DNS
+			
+			
+				gethostbyname
+				gethostbyaddr
+		9.协议访问
+				/etc/protocols 当前系统支持的所有协议
+			
+				setprotoent 
+				getprotoent
+				endprotoent
+			
+			
+				getprotobyname
+				getprotobynumber
+		
+			案例：
+				查找协议的编号
+					UDP协议
+					TCP协议
+					ICMP协议
+					HTTP协议	
+			
+			协议的三种格式：
+					名字:	TCP
+					编号:	6
+					宏: 	IPPROTO_TCP=6
+		9.获取本机IP地址
+					掩码地址
+					广播地址
+					MTU
+					MAC
+			函数说明：
+					ioctl
+				9.1.获取接口名
+						a.SIOCGIFCONF 请求类型
+						b.struct ifconf 返回接收所有接口
+						c.每个接口使用ifreq存储
+				9.2.struct ifconf
+						{
+						}
+						struct ifreq{
+						}
+						上面两个结构体在net/if.h头文件中
+						
+				9.3.SIOCGIFCONF	等请求类型
+				在bits/ioctls.h头文件中。
+				
+作业：
+			1.把获取下面域名的IP地址
+						www.tarena.com.cn
+						google.com.hk
+						baidu.com
+			2.使用ioctl获取本机所有的接口名，并且
+				打印每个接口的IP地址，广播地址，MTU，掩码，MAC地址
+				
+				
+				
+							
+			
+								
+							
+				
+
+

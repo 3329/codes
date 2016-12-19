@@ -1,0 +1,14 @@
+smartPointer
+
+// If you want to use samrtpointer,
+// you need do like this.
+
+#include "Util/RCObject.h"   	// 1
+#include "Util/RcObjImp.h"		// 2 
+
+class AosAsyncTransReqCaller : virtual public OmnRCObject // 3
+{
+	OmnDefineRCObject;  // 4
+}
+
+

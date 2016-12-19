@@ -1,0 +1,189 @@
+一、网络选项
+数据链路层<-IP网络层<-TCP/UDP传输层->HTTP/FTP应用层
+		1.每层网络包的结构
+				arp
+				 |
+		         ip icmp
+				 |
+		         upd/tcp 
+				 |
+			     http 
+		2.怎么控制每层的协议头？
+				a.使用编程获取所有头，或者自己构建包
+				b.简单的控制协议头的某些选项
+						setsockopt/*
+						getsockopt
+			
+	int setsockopt(int sockfd,//socket描述符号
+				int level,//选项层数 IP ICMP UDP TCP 通用选项
+				int optname,//选项名
+				void *optval,//选项的值
+				socklen_t optlen)//选项值的长度
+
+层数：
+		通用层SOL_SOCKET
+				SO_BROADCAST
+				SO_RCVBUF
+				SO_SNDBUF
+				SO_REUSEADDR
+				SO_TYPE
+		
+		IP层IPPROTO_IPIP
+				组播成员选项
+		
+		UDP层IPPROTO_UDP
+		
+		TCPv层IPPROTO_TCP
+		
+		ICMP层IPPROTO_ICMP
+		案例：
+				设置获取描述符号的缓冲
+					对服务器socket与客户socket都有效。
+					
+					   
+			
+
+
+二、广播，组播
+		广播：只对UDP有效
+		广播地址：主机位全部为1的IP地址。
+		
+		IP地址定义宏:
+			INADDR_ANY
+			INADDR_BROADCAST
+			INADDR_LOOBACK
+		案例：
+				广播。
+						 a.使用广播地址
+						 b.设置广播SO_BROADCAST选项
+					      c.接收方绑定广播地址
+						
+
+三、HTTP协议
+		文本协议。
+		1.请求协议
+	案例：
+		获取浏览器的请求信息，这些信息遵循HTTP协议	
+	结论：
+		请求协议的格式。
+		a.请求头行
+				唯一一行
+				请求方法   请求资源  HTTP/版本\r\n
+			
+			注意：HTTP版本只有两个1.0 1.1	
+				请求方法：GET(请求网页) POST(发送数据) [HEADER]
+				请求资源/路径/资源名
+		b.请求头
+				KEY:VALUE\r\n
+			
+			注意：
+				KEY在HTTP协议中有专门的规定。
+				KEY也可以是用户定义的KEY。	
+				HOST：
+				User-Agent:
+				Accept:
+				Accept-Language:
+				Accept-Encoding:  * (gzip,deflate)
+				Accept-Charset: 编码集
+				Keep-Alive:
+				Connection:
+		c.空行
+				\r\n
+		d.数据行    post请求才有数据行,get请求没有数据行
+	
+	案例：
+			写TCP客户端，向
+				http://bbs.tarena.com.cn/index.php
+			发送HTTP请求
+			目的：
+					a.服务器是否识别请求
+					b.查看服务器返回的数据的格式		
+			
+			
+补充：
+		URL：Universe Resoure Locator
+		协议://地址:端口/目录/文件
+		http://192.168.180.67:9999/index.html
+		ftp://192.168.0.26
+		file:///盘符/目录/文件
+		
+		http://crm.tarena.com.cn/
+		http://bbs.tarena.com.cn/
+		
+									
+		2.响应协议
+			a.相应头
+					HTTP/版本 响应状态码 响应状态描述
+					注意：
+							状态码：
+								1XX		正在处理
+								2XX		处理成功  200 ok
+								3XX		在继续处理 
+								4XX		客户错误
+								5XX		服务器内部错误
+												
+					
+			b.响应行
+					KEY:VALUE
+					Content-Length:(普通数据)
+					Transfer-Encoding:chunked(分块数据)
+			c.空行
+					\r\n
+			d.响应数据
+					普通数据
+					分块数据
+					
+					块的大小(16进制)
+					块的数据
+					空行
+					块的大小(16进制)
+					块的数据
+					块大小=0
+					
+总结：
+		向WEB发起请求，获取WEB页面。
+		PCAP  WINPCAP
+					
+四、多线程控制
+		1.控制线程
+			sleep pause 对不同的当前线程起效果
+			停止一个线程使用sleep与pause
+			终止sleep，与pause使用信号。
+		
+		2.main线程的线程ID
+			pthread_self返回当前线程ID
+		
+		3.终止线程
+			a.pthread_exit 终止当前线程，只能在线程代码中调用终止当前线程。
+			void pthread_exit(void *exitval);
+			[可以在线程的任意地方调用]
+			==return (void*)val;
+			[只能线程函数本身调用]
+			
+			b.pthread_cancel在线程外部终止其他线程。				
+			int pthread_cancel（pthread_t tid）;
+			
+				与pthread_cancel相关的函数。
+				void pthread_testcancel(void);
+			
+			pthread_cancel是修改内核中线程的状态，达到结束某个线程的执行。这个函数本身不会结束线程。
+			每个线程有一个cancelstate,
+			系统在线程的时候，会判定cancelstate状态，
+			如果该状态为取消，系统结束这个线程。
+			但当线程比较忙，系统没有CPU资源区判定这个cancelstate状态。导致如下：用户调用pthread_cancel但线程并没有结束。
+			
+			建议在被取消线程中使用pthread_testcancel强制测试线程的cancel状态
+			结论：
+				pthread_cancel强烈建议与pthread_testcancel搭配使用。
+					
+				
+五、多线程的同步
+
+
+
+
+作业：
+			1.随便找一个网站，得到网站IP地址
+			2.写TCP程序，合成请求字符串，请求下载网站首页。
+					要求首页保存成.html文件。
+			

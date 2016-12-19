@@ -1,0 +1,9 @@
+<sdoc zky_sdocobjid="cmdprocsimple">
+</sdoc>
+
+
+<action type="actcmd" machines=”0” all="true">
+	<command_def cmd_id="xxx">ls<command_def>
+<rule>xxx</rule>
+</action>
+

@@ -1,0 +1,19 @@
+About RandomNum
+
+1. src/SeReqRroc/RunSmartdoc.cpp
+	
+	func : proc(const AosRundataPtr &rdata)
+
+			AosRunJimo();
+2. src/API/AosApiR.cpp
+		AosRunJimo();    ->    jimo->run();
+
+3. src/Jimo/jimo.cpp
+	run();
+	 return (*(AosRundata_Jimo_WorkerDoc)func)(rdata, this, worker_doc);  
+
+4. DynJimos/JimoRandomNum/JimoRandomNum.cpp
+	init();
+	JimoRandomNumShell.cpp ->  dataPhrase()
+			
+	

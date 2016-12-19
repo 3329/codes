@@ -1,0 +1,26 @@
+gb2312 to utf-8
+
+dirs:
+	AOS/src/UtilHash/Encode.cpp
+	AOS/src/Util/Encode.cpp
+
+
+quention:
+
+	// 1.new memory
+	char *outbuf =new char[2 * length];
+	size_t outlen = 2*length;
+
+	// 2. keep pointer
+	char *src = outbuf;
+
+	// 3. do gb2312 to utf-8
+	g2u(rslt.getBuffer(), length, outbuf, outlen);
+	cout << outbuf << endl;
+
+	// 4.delete memory
+	delete[] src;
+
+
+note:
+	谁申请的内存,谁来释放!!!

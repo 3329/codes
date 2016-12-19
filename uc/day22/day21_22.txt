@@ -1,0 +1,388 @@
+一.QT开发环境
+	1.QT的安装
+			源代码安装
+			1.1.解压
+			1.2.configure -prefix 安装目录
+			1.3.make
+			1.4.make install
+	2.QT配置
+			2.1.把$QT_HOME/bin	配置到PATH环境变量之中。	
+			2.2.把$QT_HOME配置到环境变量QTDIR
+			2.3.把$QT_HOME/include配置到QTINC
+			2.4.把$QT_HOME/lib配置到QTLIB
+	3.QT安装目录介绍
+			bin/  QT的工具
+			include/ 头文件
+			lib/ 库文件
+			mkspecs/各个编译器的makefile文件模板
+			
+	4.QT的工具
+			assistant帮助文档
+			qmake QT的makefile自动化工具
+			qtconfig QT环境配置
+			designer QT的界面设计器
+			uic QT界面编译器
+			rcc QT资源编译器
+			moc QT信号与槽的代理代码生成工具
+			
+			
+	
+	5.QT的字体与字库
+			5.1.使用qtconfig设置QT的字体
+			5.2.把qtconfig对应的字库拷贝系统目录
+					/etc/fonts或者用户目录下	~/.fonts/		
+					
+			
+	6.qt的头文件与库文件
+				QT的类：一个类一个头文件
+				QT的库与头文件按照模块方式组织：
+						头文件每个目录表示模块
+						一个so文件表示模块
+				
+				QtGui:gui
+						include/QtGui
+						libQtGui.so
+				QtCore:core
+						include/QtCore
+						libQtCore.so
+				QtThread
+				QtXml
+				QtSql
+				QtNetwork
+				QtOpengl
+				QtWebkit
+				
+				
+				头文件两个版本
+						qapplication.h  (旧C++版本)
+						QApplication		(新C++版本)	
+		7.qt的帮助文档
+				assistant				
+		8.qmake与pro文件的使用
+					pro文件编写：
+			8.1.pro文件格式：
+					#注释
+					KEY=VALUE1 VALUE2 ... VALUEn
+					
+					KEY=VALUE1 \
+							VALUE2 \
+							... 	 \
+							VALUEn
+					
+					KEY+=VALUE1
+					KEY+=VALUE2
+					KEY+=...
+					KEY+=VALUEn
+			8.2.pro中的常用KEY	
+					这些KEY控制着gcc的选项	 
+					-W -g -O -l -L -shared等
+					a.TEMPLATE 
+							app:连接成执行文件
+							lib:连接成库文件
+					
+					b.SOURCES
+							指定cpp代码文件列表
+					c.HEADERS
+							指定h代码文件列表（QT的头文件有单独的作用：信号/槽）		
+					d.CONFIG
+							配置编译器的常见选项
+							release：发布连接-O
+							debug:	调试连接 -g
+							
+							warn_on: 开启警告	-Wall
+							warn_off:关闭警告	-w
+							
+							qt|opengl|x11|thread
+							
+							windows|console(对Win32平台有效)
+									
+							shared|dll static|staticlib 
+							
+							resources ：单独编译rcc资源rc文件
+					e.QT
+						配置QT模块
+							core 
+							gui 	
+							network 
+							opengl 
+							svg	(scaled vector graphics)
+							sql
+							xml
+							....
+						只有在CONFIG中指定为QT程序才配置QT
+						
+					f.TARGET
+							指定-o选项的内容
+							
+					g.FORMS
+							指定ui文件，自动调用uic编译ui文件
+					
+					h.LIBS：
+							指定-l 与-L等额外选项
+										
+	 案例：
+	 		动态库项目
+	 		静态库项目
+	 		
+	 								
+		9.designer的使用						
+				9.1.designer的界面介绍			
+							主窗体=操作菜单+工具箱
+							菜单：编辑菜单+工具菜单
+							编辑菜单=界面编辑+信号与槽的编辑
+							工具菜单=控制设计器的子窗口
+				9.2.子窗体
+							设计窗体（所见即所得的设计）
+							属性编辑器(编辑控件的属性)
+							信号与槽编辑器
+							
+							动作编辑器
+							资源浏览器
+				9.3.编辑界面
+				9.4.编辑信号与槽
+		10.uic的使用
+				uic -o 头文件名  *.ui文件
+				
+				产生的类名：Ui_窗体对象名
+									Ui::窗体对象名
+									
+				void setupUi(QDialog *dlg);		
+				
+				把.h当成正常类使用。
+				
+				
+				
+							
+二.QT类的结构体系
+	1.GUI类的结构体系
+		QObject
+			|-QCoreApplication
+					|-QApplication
+		+QPaintDevice	
+			|-QWidget
+					|-QDialog 
+					|-QMainWindow
+					|-控件	
+							|-输入控件
+							|-显示控件
+							|-容器控件
+							|-按钮控件
+							|-布局控件
+							|-工具条与状态条
+							|-菜单
+	2.QT程序的组织
+			2.1.按照窗体为基本单位组织代码
+					一个窗体一个类
+			2.2.每个控件定义为窗体类成员变量
+			2.3.一个QT程序一个项目目录
+			2.4.一个典型QT程序
+							主程序文件
+							窗体类:*.h  *.cpp
+							......
+							窗体类:*.h  *.cpp
+							*.pro文件(也可以由qmake自动生成)
+			
+			2.5.一个标准QT项目的模板
+					2.5.1.建立项目目录				
+					2.5.2.QT主程序文件
+					2.5.3.根据需要编写QT的窗体类
+								*.h
+								*.cpp
+								
+							 注意：
+							 	窗体类一般处理如下事情：
+							 	a.构造器(初始化)
+							 				父类构造器
+							 				初始化列表
+							 	b.析构器(释放)
+							 	c.信号与槽函数及其绑定		
+							
+							 注意：
+							 		控件构造器一定提供缺省构造器
+							 		每个控件在构造器指定父窗体
+							 		父窗体参数都在最后
+							 注意		
+							 	控件的初始化由如下环节构成。
+							 	大小
+							 	位置
+							 	可见（控件的可见与父窗体一致）
+							 	其他属性
+							 注意：
+							 	初始化控件主要初始化属性
+							 	每个属性对应两个方法：
+							 				设置属性
+							 				获取属性
+				2.5.4.写pro项目描述文件
+									注意：
+										扩展名必须*.pro			 		
+							 		
+			
+											
+		2.6.QApplication与QT的编码
+			2.6.1.QApplication构造器需要main的参数		
+			2.6.2.::exec进程开始循环
+			2.6.3.quit()
+			2.6.4.::exit(int);
+			结论:QApplication控制QT程序的进程的执行
+					 完成QT的环境设置。
+			
+			2.6.5.QT的编码由QTextCodec类负责
+				a.产生QTextCodec对象
+			QTextCodec*=::codecForName(编码字符串);
+				b.设置编码对象到QT的环境
+			::setCodecForTr(QTextCodec*);
+			设置编码只对QT中的tr函数有效。	
+				注意：必须在QApplication对象产生后操作	c.QT在每个类提供编码翻译函数
+				QString ::tr(QString)
+						
+	2.7.QWidget与QObject
+			2.7.1.QObject负责信号与槽
+						::connect
+						::disconnect
+						
+						 负责字符串编码转换
+						::tr
+						
+						 负责信号槽的代理代码生成
+						Q_OBJECT
+						
+			2.7.2.QWidget常见属性
+					size
+					pos
+					visible
+					cursor
+					tooltip
+					width
+					height
+					windowicon
+					
+					支持图像：
+							jpeg png gif
+
+三.QT的信号与槽的设计思想与应用
+		1.什么是信号/槽
+				signal:函数原型
+				slot:函数原型的实现
+			信号与槽的关系：调用与被调用	
+					调用->发信号 emit
+					被调用->槽调用
+		2.信号与槽的面向对象背景
+				信号与槽这种函数调用方式：
+							对象之间耦合关系
+				
+				案例：
+						比较高耦合的调用与低耦合的调用方式
+						
+		3.信号与槽的实现
+					3.1.调用类					
+					3.2.被调用
+					3.3.实现信号，发送信号
+					3.4.实现槽，建立槽与信号的关系
+
+作业：
+		1.独立重写信号与槽的代码。
+		2.理解Calling与Called是否有关联关系？
+		3.理解信号与槽就是调用与被调用关系！
+		4.总结实现信号的步骤是...?
+		5.总结实现槽的步骤是...?
+		6.总结信号与槽的连接起什么作用？
+		
+		4.QT中信号与槽的作用
+				4.1.QT类中已经定义大量的信号与槽
+				4.2.信号与槽在QT的理解		
+						QT的信号与槽不是事件
+						而是事件发生时候的一种调用方式
+							
+				案例：
+						体会信号槽同事件的混淆。
+						
+				补充：
+						QMessageBox提供静态方法弹出各种提示对话框			
+					
+				用户的交互过程：
+						点击按钮(事件)->发出信号 
+									|
+							 connect	
+									|
+						实现槽函数->处理信号
+				
+				在QT中处理交互有两种方式：
+							直接处理事件
+							处理信号的槽调用			
+				一般通过处理信号的槽调用来实现交互。
+				因为	QT提供了大量的事件处理，并且发出各种常见的信号。所以只需要处理信号的槽调用，可以满足大部分的交互处理。
+		5.信号与槽的处理步骤
+				4.1.声明槽函数
+							问题：槽函数声明在哪里？
+								槽函数处理的数据与哪个对象有关	
+							问题：槽函数的原型怎么确定?		
+								先确定要处理的信号。
+				4.2.实现槽函数
+							与普通函数的实现一样。	
+				4.3.使用每个类都有的函数connect连接信号源与目标槽
+				
+				注意：
+						在头文件中引用Q_OBJECT宏			
+		6.信号与槽的应用案例：
+					加法器:设计界面+调用界面+处理交互
+				主程序文件
+						窗体类
+															
+
+四.QT类的重载与覆盖
+		7.QT事件
+			7.1.事件与信号的关系
+					事件在QT中是系统发出的信号，QT类某个函数自动调用。
+			7.2.QT类的常见事件
+					绘制事件
+					鼠标事件
+					键盘事件
+					
+					clicked信号是鼠标事件中发出的一个信号
+					
+			7.3.QWidget负责大部分事件的实现
+					绘制事件
+					void paintEvent(QPaintEvent *e)
+					键盘事件
+					void keyPressEvent(QKeyEvent *e)
+					void keyReleaseEvent(QKeyEvent *e)
+					鼠标事件
+				void mousePressEvent(QMouseEvent *e)
+				void mouseReleaseEvent(QMouseEvent *e)
+					
+				void mouseMoveEvent(QMouseEvent *e)
+案例：
+		写一个按钮类：外观是菱形
+		a.外观绘制
+		b.控制鼠标响应
+		步骤：
+				1.建立项目：目录与文件
+				2.实现文件：
+							pro文件
+							按钮类
+							窗体类
+							主程序文件
+				3.绘制菱形
+						菱形绘制原理：
+								上面两条白色线
+								下面两条黑色线
+								
+注意：
+		vtable找不到的原因：
+				1.pro没有配置headers	
+				2.可能还是使用原来的o文件
+		解决：
+				1.检查pro中的headers
+				2.make clean
+				  qmake
+				  make
+
+
+
+				  		
+					
+									
+							
+							
+			
+
